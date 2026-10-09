@@ -2,10 +2,10 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
+import Background from "../assets/background.png";
 
 import "./Login.css";
 import Logo from "../assets/logo.svg";
-import Background from "../assets/background.png";
 
 const API_URL =
   import.meta.env.VITE_API_URL || "http://localhost:3000/api";
