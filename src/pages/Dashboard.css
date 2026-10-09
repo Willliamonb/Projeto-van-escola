@@ -1,72 +1,165 @@
 
-@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
+/* ========================================
+   LUMIO — PLANEJAMENTO DE ROTAS
+======================================== */
+
+:root {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, sans-serif;
+
+  color: #0f172a;
+  background: #0e1c36;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+
+  --lumio-navy: #0e1c36;
+  --lumio-dark: #1e293b;
+  --lumio-darkest: #0f172a;
+  --lumio-yellow: #eab308;
+  --lumio-yellow-hover: #ca8a04;
+  --lumio-text: #0f172a;
+  --lumio-muted: #64748b;
+  --lumio-soft: #94a3b8;
+  --lumio-border: #e2e8f0;
+  --lumio-surface: #ffffff;
+  --lumio-background: #f8fafc;
+}
+
+/* ========================================
+   RESET E CONFIGURAÇÕES GERAIS
+======================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: var(--lumio-navy);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline: 3px solid rgba(234, 179, 8, 0.4);
+  outline-offset: 2px;
+}
+
+button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* ========================================
+   ESTRUTURA GERAL
+======================================== */
 
 .lumio-dashboard {
   min-height: 100vh;
-  background: #f3f5f9;
-  color: #172033;
-  font-family: "Plus Jakarta Sans", sans-serif;
+  background: var(--lumio-navy);
 }
 
+.lumio-main {
+  width: 100%;
+  max-width: 1800px;
+  margin: 0 auto;
+  padding: 14px 24px 20px;
+}
+
+/* ========================================
+   CABEÇALHO
+======================================== */
+
 .lumio-header {
-  height: 76px;
-  padding: 0 28px;
-  background: #fff;
-  border-bottom: 1px solid #e8ebf1;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  height: 64px;
+  padding: 0 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  position: relative;
-  z-index: 500;
+  background: #ffffff;
+  border-bottom: 1px solid var(--lumio-border);
 }
 
 .lumio-brand,
 .lumio-user {
   display: flex;
   align-items: center;
+}
+
+.lumio-brand {
   gap: 12px;
 }
 
 .lumio-brand-icon {
-  width: 43px;
-  height: 43px;
-  border-radius: 13px;
-  background: #fff1dc;
+  width: 40px;
+  height: 40px;
   display: grid;
   place-items: center;
-  font-size: 24px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: var(--lumio-yellow);
+  font-size: 23px;
 }
 
-.lumio-brand strong,
-.lumio-user-info strong {
-  display: block;
-  font-size: 15px;
+.lumio-brand > div,
+.lumio-user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lumio-brand strong {
+  color: var(--lumio-navy);
+  font-size: 1.2rem;
   font-weight: 800;
+  letter-spacing: -0.5px;
 }
 
-.lumio-brand small,
-.lumio-user-info small {
-  display: block;
-  margin-top: 3px;
-  color: #81899a;
-  font-size: 11px;
+.lumio-brand small {
+  color: var(--lumio-muted);
+  font-size: 0.72rem;
 }
 
 .lumio-user {
-  gap: 10px;
+  gap: 11px;
 }
 
 .lumio-avatar {
-  width: 39px;
-  height: 39px;
-  border-radius: 50%;
+  width: 36px;
+  height: 36px;
   display: grid;
   place-items: center;
+  flex-shrink: 0;
   overflow: hidden;
-  background: #fff0d8;
-  color: #9a5700;
-  font-weight: 800;
+  border-radius: 50%;
+  background: var(--lumio-navy);
+  color: #ffffff;
+  font-weight: 700;
 }
 
 .lumio-avatar img {
@@ -75,194 +168,232 @@
   object-fit: cover;
 }
 
+.lumio-user-info strong {
+  color: var(--lumio-text);
+  font-size: 0.82rem;
+}
+
+.lumio-user-info small {
+  color: var(--lumio-muted);
+  font-size: 0.7rem;
+}
+
 .lumio-logout {
-  margin-left: 12px;
-  padding: 9px 13px;
-  border: 1px solid #e2e6ed;
+  margin-left: 8px;
+  padding: 8px 14px;
+  border: 1px solid var(--lumio-border);
   border-radius: 9px;
-  background: #fff;
-  color: #4b5567;
-  font: inherit;
-  font-size: 12px;
-  cursor: pointer;
+  background: #ffffff;
+  color: #475569;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: background 0.2s ease, color 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .lumio-logout:hover {
-  background: #f6f7fa;
+  border-color: #fecaca;
+  background: #fef2f2;
+  color: #dc2626;
 }
 
-.lumio-main {
-  height: calc(100vh - 76px);
-  min-height: 600px;
-  padding: 22px;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 410px;
-  gap: 22px;
+/* ========================================
+   BANNER PRINCIPAL
+======================================== */
+
+.lumio-hero {
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
 }
 
-.lumio-map-section {
-  min-width: 0;
-  min-height: 400px;
-  height: 100%;
-  position: relative;
-  overflow: hidden;
-  border: 1px solid #e5e8ef;
-  border-radius: 18px;
-  background: #e8edf2;
-  box-shadow: 0 8px 30px rgb(25 39 65 / 5%);
+.lumio-hero > div {
+  max-width: 780px;
 }
 
-.lumio-map {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  min-height: 400px;
-}
-
-.lumio-eta-card {
-  position: absolute;
-  z-index: 400;
-  top: 22px;
-  left: 22px;
-  min-width: 190px;
-  padding: 17px 20px;
-  border: 1px solid rgb(255 255 255 / 80%);
-  border-radius: 14px;
-  background: rgb(255 255 255 / 96%);
-  box-shadow: 0 8px 24px rgb(20 35 60 / 12%);
-}
-
-.lumio-eta-card span,
-.lumio-eta-card small {
-  display: block;
-  color: #7a8495;
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-}
-
-.lumio-eta-card strong {
-  display: block;
-  margin: 5px 0;
-  color: #c8790a;
-  font-size: 27px;
+.lumio-hero-eyebrow {
+  display: inline-block;
+  margin-bottom: 6px;
+  color: var(--lumio-yellow);
+  font-size: 0.7rem;
   font-weight: 800;
+  letter-spacing: 1.4px;
 }
 
-.lumio-eta-card small {
-  font-size: 10px;
-  font-weight: 500;
-  text-transform: none;
-  letter-spacing: 0;
+.lumio-hero h1 {
+  max-width: 760px;
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(1.45rem, 2vw, 2rem);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.7px;
 }
 
-.lumio-location-button {
-  position: absolute;
-  z-index: 400;
-  right: 18px;
-  bottom: 25px;
-  width: 45px;
-  height: 45px;
-  border: 0;
+.lumio-hero p {
+  max-width: 660px;
+  margin: 7px 0 0;
+  color: #cbd5e1;
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.lumio-demo-badge {
+  flex-shrink: 0;
+  padding: 9px 12px;
+  border: 1px solid #fde68a;
   border-radius: 12px;
-  background: white;
-  color: #c8790a;
-  font-size: 29px;
-  box-shadow: 0 4px 15px rgb(20 35 60 / 18%);
-  cursor: pointer;
+  background: #fef9c3;
+  color: #713f12;
+  font-size: 0.75rem;
+  font-weight: 700;
 }
 
-.lumio-sidebar {
+/* ========================================
+   GRID PRINCIPAL
+======================================== */
+
+.lumio-grid {
+  display: grid;
+  grid-template-columns: minmax(265px, 290px) minmax(0, 1fr);
+  align-items: start;
+  gap: 16px;
+}
+
+.lumio-form-panel,
+.lumio-map-card,
+.lumio-sequence-card {
   min-width: 0;
-  height: 100%;
-  overflow-y: auto;
-  padding: 23px;
-  border: 1px solid #e5e8ef;
-  border-radius: 18px;
-  background: #fff;
-  box-shadow: 0 8px 30px rgb(25 39 65 / 5%);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 14px;
+  background: var(--lumio-surface);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.1);
+}
+
+.lumio-form-panel {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ========================================
+   TÍTULOS E CABEÇALHOS
+======================================== */
+
+.lumio-panel-heading {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
 }
 
 .lumio-badge {
   display: inline-block;
-  padding: 7px 10px;
-  border-radius: 7px;
-  background: #fff3df;
-  color: #a86200;
-  font-size: 9px;
+  padding: 6px 9px;
+  border: 1px solid #fde68a;
+  border-radius: 20px;
+  background: #fef9c3;
+  color: #713f12;
+  font-size: 0.62rem;
   font-weight: 800;
-  letter-spacing: 0.6px;
+  letter-spacing: 0.45px;
 }
 
-.lumio-panel-heading h1 {
-  margin: 14px 0 6px;
-  font-size: 24px;
-  font-weight: 800;
-  letter-spacing: -0.8px;
-}
-
-.lumio-panel-heading p {
+.lumio-panel-heading h2,
+.lumio-card-heading h2,
+.lumio-section-heading h2 {
   margin: 0;
-  color: #7d8798;
-  font-size: 12px;
-  line-height: 1.7;
+  color: var(--lumio-text);
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.3px;
 }
+
+.lumio-panel-heading p,
+.lumio-card-heading p,
+.lumio-section-heading p {
+  margin: 5px 0 0;
+  color: var(--lumio-muted);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.lumio-section-heading {
+  margin-bottom: 9px;
+}
+
+/* ========================================
+   ALERTAS
+======================================== */
 
 .lumio-alert {
-  margin-top: 17px;
-  padding: 11px 13px;
-  border: 1px solid #f4d6b2;
-  border-radius: 9px;
-  background: #fff8ed;
-  color: #9b5700;
-  font-size: 12px;
+  padding: 10px 12px;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 0.8rem;
   line-height: 1.5;
+  overflow-wrap: anywhere;
 }
+
+/* ========================================
+   FORMULÁRIO DE ENDEREÇOS
+======================================== */
 
 .lumio-address-list {
-  display: grid;
-  gap: 17px;
-  margin-top: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
 }
 
-.lumio-field label {
+.lumio-field {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lumio-field > label {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 8px;
-  color: #364054;
-  font-size: 11px;
+  color: #334155;
+  font-size: 0.76rem;
   font-weight: 700;
 }
 
 .lumio-field-number {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  border-radius: 7px;
-  background: #eef1f6;
-  color: #536078;
-  font-size: 11px;
+  border-radius: 8px;
+  background: #e2e8f0;
+  color: #334155;
+  font-size: 0.75rem;
   font-weight: 800;
 }
 
 .lumio-field-number.partida {
-  background: #fff0d7;
-  color: #a86200;
+  background: #dcfce7;
+  color: #15803d;
 }
 
 .lumio-field-number.escola {
-  background: #e5f6ed;
-  color: #16804b;
+  background: #fef3c7;
+  color: #92400e;
 }
 
 .lumio-address-row {
+  min-width: 0;
   display: flex;
   align-items: stretch;
-  gap: 7px;
+  gap: 6px;
 }
 
 .lumio-autocomplete {
@@ -274,278 +405,736 @@
 .lumio-autocomplete input,
 .lumio-number-input {
   width: 100%;
-  height: 42px;
-  box-sizing: border-box;
-  padding: 0 11px;
-  border: 1px solid #e1e5ec;
-  border-radius: 9px;
-  outline: none;
-  background: #fbfcfe;
-  color: #273247;
-  font-family: inherit;
-  font-size: 11px;
-}
-
-.lumio-autocomplete input:focus,
-.lumio-number-input:focus {
-  border-color: #d99a3c;
-  box-shadow: 0 0 0 3px rgb(217 154 60 / 12%);
-  background: #fff;
+  height: 38px;
+  min-width: 0;
+  padding: 0 9px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: var(--lumio-text);
+  font-size: 0.75rem;
+  transition: border-color 0.2s, box-shadow 0.2s,
+    background 0.2s;
 }
 
 .lumio-autocomplete input::placeholder,
 .lumio-number-input::placeholder {
-  color: #a0a8b6;
+  color: #64748b;
+  opacity: 1;
+}
+
+.lumio-autocomplete input:focus,
+.lumio-number-input:focus {
+  border-color: var(--lumio-yellow);
+  outline: none;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(234, 179, 8, 0.14);
 }
 
 .lumio-number-input {
-  width: 53px;
-  flex-shrink: 0;
+  width: 46px;
+  flex: 0 0 46px;
+  padding: 0 4px;
   text-align: center;
 }
 
 .lumio-gps-button {
-  width: 42px;
-  height: 42px;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
   flex-shrink: 0;
-  border: 1px solid #f0dfc5;
-  border-radius: 9px;
-  background: #fff8ed;
-  color: #a86200;
-  font-size: 22px;
-  cursor: pointer;
+  border: 1px solid var(--lumio-border);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--lumio-navy);
+  font-size: 1.25rem;
+  transition: background 0.2s, border-color 0.2s;
 }
+
+.lumio-gps-button:hover {
+  border-color: var(--lumio-yellow);
+  background: #fef9c3;
+}
+
+/* ========================================
+   SUGESTÕES DE ENDEREÇO
+======================================== */
 
 .lumio-suggestions {
   position: absolute;
-  z-index: 1000;
+  z-index: 2000;
   top: calc(100% + 5px);
-  left: 0;
   right: 0;
-  max-height: 210px;
+  left: 0;
+  max-height: 220px;
   overflow-y: auto;
-  border: 1px solid #e2e6ed;
+  border: 1px solid var(--lumio-border);
   border-radius: 10px;
-  background: #fff;
-  box-shadow: 0 10px 24px rgb(20 35 60 / 14%);
+  background: #ffffff;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.14);
 }
 
 .lumio-suggestions button {
-  display: block;
   width: 100%;
-  padding: 11px;
-  border: 0;
-  border-bottom: 1px solid #f0f2f6;
-  background: #fff;
-  color: #475166;
+  padding: 10px 12px;
+  display: block;
+  border: none;
+  border-bottom: 1px solid #f1f5f9;
+  background: #ffffff;
+  color: #334155;
   text-align: left;
-  font: inherit;
-  font-size: 11px;
-  line-height: 1.5;
-  cursor: pointer;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.lumio-suggestions button:last-child {
+  border-bottom: none;
 }
 
 .lumio-suggestions button:hover {
-  background: #fff8ed;
+  background: #fef9c3;
 }
+
+/* ========================================
+   BOTÕES DO FORMULÁRIO
+======================================== */
 
 .lumio-route-button {
   width: 100%;
-  min-height: 47px;
-  margin-top: 23px;
-  border: 0;
-  border-radius: 10px;
-  background: #d97706;
-  color: white;
-  font-family: inherit;
-  font-size: 12px;
+  min-height: 42px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: 9px;
+  background: var(--lumio-yellow);
+  color: var(--lumio-darkest);
+  font-size: 0.8rem;
   font-weight: 800;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.2s;
+  box-shadow: 0 4px 12px rgba(234, 179, 8, 0.2);
+  transition: background 0.2s, transform 0.2s,
+    box-shadow 0.2s;
 }
 
 .lumio-route-button:hover:not(:disabled) {
-  background: #b96300;
+  background: var(--lumio-yellow-hover);
+  box-shadow: 0 6px 15px rgba(234, 179, 8, 0.25);
   transform: translateY(-1px);
 }
 
-.lumio-route-button:disabled {
-  opacity: 0.7;
-  cursor: wait;
+.lumio-clear-button {
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid var(--lumio-border);
+  border-radius: 9px;
+  background: #ffffff;
+  color: #334155;
+  font-size: 0.76rem;
+  font-weight: 600;
+  transition: background 0.2s, border-color 0.2s;
 }
 
-.lumio-metrics {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 23px;
-  padding: 17px 0;
-  border-top: 1px solid #edf0f4;
-  border-bottom: 1px solid #edf0f4;
+.lumio-clear-button:hover {
+  border-color: #cbd5e1;
+  background: #f1f5f9;
 }
 
-.lumio-metrics div {
+.lumio-form-note {
+  margin: -2px 0 0;
+  color: #475569;
+  font-size: 0.7rem;
+  line-height: 1.5;
+}
+
+.lumio-form-note span {
+  margin-right: 5px;
+  color: var(--lumio-yellow-hover);
+}
+
+/* ========================================
+   ÁREA PRINCIPAL DIREITA
+======================================== */
+
+.lumio-main-content {
   min-width: 0;
-  padding: 5px 9px;
-  border-left: 2px solid #f0d4a8;
-}
-
-.lumio-metrics span {
-  display: block;
-  margin-bottom: 6px;
-  color: #858ea0;
-  font-size: 9px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-}
-
-.lumio-metrics strong {
-  display: block;
-  overflow-wrap: anywhere;
-  color: #263147;
-  font-size: 13px;
-  font-weight: 800;
-}
-
-.lumio-timeline-section {
-  margin-top: 23px;
-}
-
-.lumio-timeline-section h2 {
-  margin: 0 0 16px;
-  font-size: 13px;
-  font-weight: 800;
-}
-
-.lumio-empty {
-  margin: 0;
-  padding: 17px;
-  border: 1px dashed #dfe4eb;
-  border-radius: 10px;
-  color: #858ea0;
-  font-size: 11px;
-  line-height: 1.7;
-}
-
-.lumio-timeline {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.lumio-timeline li {
-  position: relative;
   display: flex;
+  flex-direction: column;
   gap: 12px;
-  padding-bottom: 17px;
 }
 
-.lumio-timeline li:not(:last-child)::after {
-  position: absolute;
-  top: 31px;
-  bottom: 0;
-  left: 14px;
-  width: 2px;
-  background: #e7eaf0;
-  content: "";
+/* ========================================
+   CARTÃO DO MAPA
+======================================== */
+
+.lumio-map-card {
+  padding: 13px;
 }
 
-.lumio-timeline li > span {
-  z-index: 1;
-  width: 29px;
-  height: 29px;
-  flex-shrink: 0;
+.lumio-card-heading {
+  margin-bottom: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.lumio-location-button {
+  width: 36px;
+  height: 36px;
   display: grid;
   place-items: center;
+  flex-shrink: 0;
+  border: 1px solid var(--lumio-border);
+  border-radius: 9px;
+  background: #ffffff;
+  color: var(--lumio-navy);
+  font-size: 1.35rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.lumio-location-button:hover {
+  border-color: var(--lumio-yellow);
+  background: #fef9c3;
+}
+
+.lumio-map-container {
+  position: relative;
+  height: clamp(180px, 25vh, 240px);
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--lumio-border);
+  border-radius: 11px;
+  background: #e2e8f0;
+}
+
+.lumio-map {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+}
+
+.lumio-map .leaflet-control-zoom {
+  overflow: hidden;
+  border: none;
+  border-radius: 9px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+}
+
+.lumio-map .leaflet-control-zoom a {
+  width: 32px;
+  height: 32px;
+  line-height: 32px;
+  color: var(--lumio-navy);
+}
+
+.lumio-map-legend {
+  padding: 9px 2px 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  color: #475569;
+  font-size: 0.7rem;
+}
+
+.lumio-map-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lumio-map-legend small {
+  margin-left: auto;
+  color: #64748b;
+  font-size: 0.66rem;
+}
+
+.legend-dot {
+  width: 9px;
+  height: 9px;
+  display: inline-block;
   border-radius: 50%;
-  background: #fff0d7;
-  color: #a86200;
-  font-size: 11px;
-  font-weight: 800;
 }
 
-.lumio-timeline li strong {
-  display: block;
-  margin: 2px 0 5px;
-  color: #313b50;
-  font-size: 11px;
+.legend-van {
+  background: var(--lumio-navy);
 }
 
-.lumio-timeline li small {
-  display: block;
-  color: #858ea0;
-  font-size: 10px;
-  line-height: 1.6;
+.legend-stop {
+  background: var(--lumio-yellow);
 }
 
-.lumio-map-credit {
-  margin: 18px 0 0;
-  color: #9aa2af;
-  font-size: 9px;
-  text-align: center;
+/* ========================================
+   MARCADORES DO LEAFLET
+======================================== */
+
+.lumio-van-icon,
+.lumio-stop-icon {
+  border: none;
+  background: transparent;
 }
 
 .van-pin {
-  width: max-content;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 5px;
-  padding: 7px 9px;
-  border: 2px solid white;
-  border-radius: 10px;
-  background: #172033;
-  color: white;
-  box-shadow: 0 3px 10px #0003;
-  font-size: 17px;
+  gap: 2px;
+  white-space: nowrap;
+  font-size: 24px;
+  filter: drop-shadow(0 2px 3px rgba(15, 23, 42, 0.25));
 }
 
 .van-pin span {
+  padding: 3px 7px;
+  border-radius: 5px;
+  background: var(--lumio-navy);
+  color: #ffffff;
   font-size: 10px;
   font-weight: 700;
 }
 
 .stop-pin {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 3px solid #ffffff;
+  border-radius: 50%;
+  background: var(--lumio-yellow);
+  color: var(--lumio-darkest);
+  font-size: 0.8rem;
+  font-weight: 800;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.3);
+}
+
+/* ========================================
+   MÉTRICAS DO PERCURSO
+======================================== */
+
+.lumio-metrics-section {
+  min-width: 0;
+}
+
+.lumio-section-heading h2 {
+  color: #ffffff;
+  font-size: 1.05rem;
+}
+
+.lumio-section-heading p {
+  color: #e2e8f0;
+}
+
+.lumio-metrics {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.lumio-metrics > div {
+  min-width: 0;
+  min-height: 78px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid #dbe3ee;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #0f172a;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.lumio-metrics > div:hover {
+  border-color: var(--lumio-yellow);
+  transform: translateY(-2px);
+}
+
+.lumio-metrics > div > span {
+  color: #334155;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.lumio-metrics > div > strong {
+  color: #0e1c36;
+  font-size: clamp(0.8rem, 1vw, 1.05rem);
+  font-weight: 800;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.lumio-metrics .lumio-metric-featured {
+  border-color: #334155;
+  background: #1e293b;
+}
+
+.lumio-metrics .lumio-metric-featured > span,
+.lumio-metrics .lumio-metric-featured > small {
+  color: #f1f5f9;
+}
+
+.lumio-metrics .lumio-metric-featured > strong {
+  color: #facc15;
+  font-size: 1.1rem;
+}
+
+.lumio-metric-featured small {
+  font-size: 0.64rem;
+  line-height: 1.35;
+}
+
+/* ========================================
+   SEQUÊNCIA DE PARADAS
+======================================== */
+
+.lumio-sequence-card {
+  padding: 13px;
+}
+
+.lumio-empty {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.lumio-timeline {
+  position: relative;
+  margin: 0;
+  padding: 5px 0 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  list-style: none;
+}
+
+.lumio-timeline li {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  padding: 0 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  text-align: center;
+}
+
+.lumio-timeline li::before {
+  position: absolute;
+  z-index: 0;
+  top: 14px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #cbd5e1;
+  content: "";
+}
+
+.lumio-timeline li:first-child::before {
+  left: 50%;
+  width: 50%;
+}
+
+.lumio-timeline li:last-child::before {
+  width: 50%;
+}
+
+.lumio-timeline li > span {
+  position: relative;
+  z-index: 1;
   width: 30px;
   height: 30px;
   display: grid;
   place-items: center;
-  border: 3px solid white;
+  flex-shrink: 0;
+  border: 3px solid #ffffff;
   border-radius: 50%;
-  background: #d97706;
-  color: white;
-  box-shadow: 0 2px 8px #0004;
-  font-size: 12px;
+  background: var(--lumio-dark);
+  color: #ffffff;
+  font-size: 0.73rem;
   font-weight: 800;
+  box-shadow: 0 0 0 1px #cbd5e1;
 }
 
-@media (max-width: 1050px) {
+.lumio-timeline li:first-child > span {
+  background: var(--lumio-yellow);
+  color: var(--lumio-darkest);
+}
+
+.lumio-timeline li > div {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lumio-timeline li strong {
+  color: #0f172a;
+  font-size: 0.73rem;
+  overflow-wrap: anywhere;
+}
+
+.lumio-timeline li small {
+  color: #334155;
+  font-size: 0.65rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+/* ========================================
+   NOTEBOOKS COM POUCA ALTURA
+======================================== */
+
+@media (min-width: 901px) and (max-height: 800px) {
   .lumio-main {
-    height: auto;
-    min-height: 0;
-    grid-template-columns: 1fr;
+    padding-top: 9px;
+    padding-bottom: 12px;
   }
 
-  .lumio-map-section {
-    height: 55vh;
-    min-height: 380px;
+  .lumio-hero {
+    margin-bottom: 9px;
   }
 
-  .lumio-sidebar {
-    height: auto;
-    overflow: visible;
+  .lumio-hero-eyebrow {
+    margin-bottom: 4px;
+  }
+
+  .lumio-hero h1 {
+    font-size: 1.4rem;
+  }
+
+  .lumio-hero p {
+    margin-top: 4px;
+    font-size: 0.74rem;
+    line-height: 1.35;
+  }
+
+  .lumio-grid {
+    gap: 12px;
+  }
+
+  .lumio-form-panel {
+    padding: 11px;
+    gap: 9px;
+  }
+
+  .lumio-panel-heading {
+    gap: 5px;
+  }
+
+  .lumio-panel-heading p {
+    margin-top: 3px;
+    line-height: 1.3;
+  }
+
+  .lumio-address-list {
+    gap: 7px;
+  }
+
+  .lumio-field {
+    gap: 4px;
+  }
+
+  .lumio-field-number {
+    width: 22px;
+    height: 22px;
+  }
+
+  .lumio-autocomplete input,
+  .lumio-number-input,
+  .lumio-gps-button {
+    height: 34px;
+  }
+
+  .lumio-route-button {
+    min-height: 36px;
+    padding: 7px;
+  }
+
+  .lumio-clear-button {
+    padding: 7px;
+  }
+
+  .lumio-main-content {
+    gap: 9px;
+  }
+
+  .lumio-map-card,
+  .lumio-sequence-card {
+    padding: 10px;
+  }
+
+  .lumio-map-container {
+    height: 180px;
+  }
+
+  .lumio-map-legend {
+    padding-top: 7px;
+  }
+
+  .lumio-metrics > div {
+    min-height: 68px;
+    padding: 7px;
+    gap: 4px;
+  }
+
+  .lumio-metrics > div > span {
+    font-size: 0.67rem;
+  }
+
+  .lumio-metrics > div > strong {
+    font-size: 0.85rem;
+  }
+
+  .lumio-metrics .lumio-metric-featured > strong {
+    font-size: 1rem;
+  }
+
+  .lumio-metric-featured small {
+    font-size: 0.6rem;
+  }
+
+  .lumio-section-heading {
+    margin-bottom: 6px;
+  }
+
+  .lumio-timeline li > span {
+    width: 26px;
+    height: 26px;
+  }
+
+  .lumio-timeline li::before {
+    top: 12px;
+  }
+
+  .lumio-timeline li strong {
+    font-size: 0.67rem;
+  }
+
+  .lumio-timeline li small {
+    font-size: 0.6rem;
   }
 }
+
+/* ========================================
+   TELAS MÉDIAS
+======================================== */
+
+@media (max-width: 1200px) {
+  .lumio-main {
+    padding-right: 18px;
+    padding-left: 18px;
+  }
+
+  .lumio-grid {
+    grid-template-columns: 260px minmax(0, 1fr);
+    gap: 14px;
+  }
+
+  .lumio-form-panel {
+    padding: 13px;
+  }
+
+  .lumio-metrics {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .lumio-map-container {
+    height: clamp(190px, 25vh, 230px);
+  }
+}
+
+/* ========================================
+   TABLETS
+======================================== */
+
+@media (max-width: 900px) {
+  .lumio-main {
+    padding: 18px;
+  }
+
+  .lumio-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .lumio-form-panel {
+    order: 1;
+  }
+
+  .lumio-main-content {
+    order: 2;
+  }
+
+  .lumio-hero {
+    align-items: flex-start;
+  }
+
+  .lumio-hero h1 {
+    font-size: 1.8rem;
+  }
+
+  .lumio-map-container {
+    height: 300px;
+  }
+
+  .lumio-metrics {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* ========================================
+   CELULARES
+======================================== */
 
 @media (max-width: 600px) {
   .lumio-header {
-    height: 66px;
-    padding: 0 13px;
+    height: 60px;
+    padding: 0 12px;
+    gap: 8px;
+  }
+
+  .lumio-brand {
+    gap: 8px;
   }
 
   .lumio-brand-icon {
-    width: 37px;
-    height: 37px;
+    width: 34px;
+    height: 34px;
+    font-size: 19px;
+  }
+
+  .lumio-brand strong {
+    font-size: 1.05rem;
+  }
+
+  .lumio-brand small {
+    font-size: 0.63rem;
+  }
+
+  .lumio-user {
+    gap: 7px;
+  }
+
+  .lumio-avatar {
+    width: 31px;
+    height: 31px;
   }
 
   .lumio-user-info {
@@ -554,35 +1143,171 @@
 
   .lumio-logout {
     margin-left: 0;
-    padding: 8px 10px;
+    padding: 7px 9px;
+    font-size: 0.72rem;
   }
 
   .lumio-main {
-    padding: 12px;
-    gap: 14px;
+    padding: 16px 12px 22px;
   }
 
-  .lumio-map-section {
-    height: 43vh;
-    min-height: 320px;
+  .lumio-hero {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 16px;
   }
 
-  .lumio-eta-card {
-    top: 12px;
-    left: 12px;
-    min-width: 145px;
-    padding: 12px;
+  .lumio-hero h1 {
+    font-size: 1.55rem;
   }
 
-  .lumio-eta-card strong {
-    font-size: 23px;
+  .lumio-hero p {
+    font-size: 0.8rem;
   }
 
-  .lumio-sidebar {
-    padding: 17px;
+  .lumio-demo-badge {
+    padding: 8px 10px;
+    font-size: 0.68rem;
   }
 
-  .lumio-panel-heading h1 {
-    font-size: 22px;
+  .lumio-form-panel,
+  .lumio-map-card,
+  .lumio-sequence-card {
+    padding: 13px;
+    border-radius: 12px;
+  }
+
+  .lumio-map-container {
+    height: 260px;
+  }
+
+  .lumio-map-legend {
+    gap: 9px;
+  }
+
+  .lumio-map-legend small {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .lumio-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lumio-metrics > div {
+    min-height: 78px;
+    padding: 10px;
+  }
+
+  .lumio-metrics .lumio-metric-featured {
+    grid-column: span 2;
+  }
+
+  .lumio-timeline {
+    flex-direction: column;
+    gap: 0;
+    padding-top: 4px;
+  }
+
+  .lumio-timeline li {
+    width: 100%;
+    min-height: 58px;
+    flex: none;
+    padding: 0 0 15px;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 12px;
+    text-align: left;
+  }
+
+  .lumio-timeline li::before,
+  .lumio-timeline li:first-child::before,
+  .lumio-timeline li:last-child::before {
+    top: 29px;
+    bottom: 0;
+    left: 14px;
+    width: 2px;
+    height: auto;
+  }
+
+  .lumio-timeline li:last-child::before {
+    display: none;
+  }
+
+  .lumio-timeline li > span {
+    width: 29px;
+    height: 29px;
+  }
+
+  .lumio-timeline li > div {
+    padding-top: 3px;
+  }
+
+  .lumio-timeline li strong {
+    font-size: 0.78rem;
+  }
+
+  .lumio-timeline li small {
+    font-size: 0.7rem;
+  }
+}
+
+/* ========================================
+   CELULARES PEQUENOS
+======================================== */
+
+@media (max-width: 380px) {
+  .lumio-header {
+    padding: 0 8px;
+  }
+
+  .lumio-brand {
+    gap: 6px;
+  }
+
+  .lumio-brand small {
+    display: none;
+  }
+
+  .lumio-brand strong {
+    font-size: 0.98rem;
+  }
+
+  .lumio-main {
+    padding-right: 9px;
+    padding-left: 9px;
+  }
+
+  .lumio-form-panel,
+  .lumio-map-card,
+  .lumio-sequence-card {
+    padding: 11px;
+  }
+
+  .lumio-address-row {
+    gap: 4px;
+  }
+
+  .lumio-number-input {
+    width: 40px;
+    flex-basis: 40px;
+  }
+
+  .lumio-gps-button {
+    width: 34px;
+  }
+
+  .lumio-autocomplete input {
+    padding: 0 7px;
+    font-size: 0.68rem;
+  }
+
+  .lumio-metrics > div > span {
+    font-size: 0.68rem;
+  }
+
+  .lumio-metrics > div > strong {
+    font-size: 0.85rem;
   }
 }

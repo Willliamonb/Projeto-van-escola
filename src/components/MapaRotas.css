@@ -1,134 +1,283 @@
+/* =====================================================
+   LUMIO — MAPA DE ROTAS
+   ===================================================== */
+
+:root {
+  --rotas-primary: #172b4d;
+  --rotas-primary-light: #243f68;
+  --rotas-accent: #f59e0b;
+  --rotas-accent-hover: #d97706;
+  --rotas-background: #f1f5f9;
+  --rotas-surface: #ffffff;
+  --rotas-text: #172033;
+  --rotas-muted: #64748b;
+  --rotas-border: #e2e8f0;
+}
+
+.rotas-app,
+.rotas-app * {
+  box-sizing: border-box;
+}
 
 .rotas-app {
   min-height: 100vh;
-  background: #f4f6fa;
-  color: #172033;
-  font-family: "Plus Jakarta Sans", sans-serif;
+  color: var(--rotas-text);
+  background: var(--rotas-background);
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
 }
 
+.rotas-app button,
+.rotas-app input {
+  font: inherit;
+}
+
+.rotas-app button {
+  cursor: pointer;
+}
+
+.rotas-app button:focus-visible,
+.rotas-app input:focus-visible {
+  outline: 3px solid rgba(245, 158, 11, 0.35);
+  outline-offset: 2px;
+}
+
+/* =====================================================
+   CABEÇALHO
+   ===================================================== */
+
 .rotas-header {
-  height: 70px;
-  padding: 0 28px;
-  background: #fff;
-  border-bottom: 1px solid #e7eaf0;
+  position: relative;
+  z-index: 1000;
+  height: 72px;
+  padding: 0 30px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 20px;
+  background: var(--rotas-surface);
+  border-bottom: 1px solid var(--rotas-border);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.035);
 }
 
-.rotas-brand,
-.rotas-user {
+.rotas-brand {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 13px;
 }
 
 .rotas-brand > i {
-  color: #d97706;
-  font-size: 25px;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  background: #fff4d8;
+  color: var(--rotas-primary);
+  font-size: 22px;
 }
 
 .rotas-brand h1 {
-  font-size: 19px;
-  font-weight: 800;
   margin: 0;
+  color: var(--rotas-primary);
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.6px;
 }
 
 .rotas-brand h1 span {
-  color: #778197;
+  color: var(--rotas-muted);
+  font-size: 0.9rem;
   font-weight: 500;
+  letter-spacing: 0;
 }
 
 .rotas-user {
-  color: #4c566b;
-  font-size: 14px;
-  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #334155;
+  font-size: 0.85rem;
+  font-weight: 600;
 }
 
-.rotas-user i {
-  font-size: 25px;
-  color: #64748b;
+.rotas-user > i {
+  color: var(--rotas-primary);
+  font-size: 1.7rem;
 }
+
+/* =====================================================
+   ESTRUTURA PRINCIPAL
+   ===================================================== */
 
 .rotas-layout {
-  min-height: calc(100vh - 70px);
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 440px;
+  grid-template-columns: minmax(0, 1fr) 420px;
+  min-height: calc(100vh - 72px);
 }
+
+/* =====================================================
+   MAPA
+   ===================================================== */
 
 .rotas-mapa {
   position: relative;
-  min-height: 650px;
+  min-width: 0;
+  min-height: calc(100vh - 72px);
   overflow: hidden;
+  background: #dbe5ec;
 }
 
 .rotas-mapa-canvas {
   position: absolute;
   inset: 0;
-  min-height: 100%;
-  background: #e8edf2;
+  width: 100%;
+  height: 100%;
+  min-height: 500px;
+  z-index: 1;
+}
+
+.rotas-mapa .leaflet-control-zoom {
+  margin: 18px;
+  overflow: hidden;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.16);
+}
+
+.rotas-mapa .leaflet-control-zoom a {
+  width: 36px;
+  height: 36px;
+  line-height: 36px;
+  color: var(--rotas-primary);
 }
 
 .rotas-eta {
   position: absolute;
+  top: 24px;
+  left: 24px;
   z-index: 500;
-  top: 22px;
-  left: 22px;
-  min-width: 185px;
+  min-width: 190px;
   padding: 17px 20px;
-  background: #fff;
-  border: 1px solid #e6eaf0;
-  border-radius: 14px;
-  box-shadow: 0 8px 30px #17203318;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.13);
+  backdrop-filter: blur(10px);
 }
 
-.rotas-eta span,
-.rotas-telemetria span {
-  display: block;
-  color: #788398;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
+.rotas-eta span {
+  color: var(--rotas-muted);
+  font-size: 0.76rem;
+  font-weight: 600;
 }
 
 .rotas-eta strong {
-  display: block;
-  margin-top: 6px;
-  color: #d97706;
-  font-size: 27px;
+  color: var(--rotas-primary);
+  font-size: 1.85rem;
   font-weight: 800;
+  letter-spacing: -1px;
 }
 
 .rotas-gps-float {
   position: absolute;
-  z-index: 500;
   right: 22px;
-  bottom: 25px;
+  bottom: 24px;
+  z-index: 500;
   width: 48px;
   height: 48px;
-  border: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--rotas-border);
   border-radius: 13px;
-  background: #fff;
-  color: #334155;
-  font-size: 19px;
-  box-shadow: 0 5px 20px #17203322;
-  cursor: pointer;
+  background: #ffffff;
+  color: var(--rotas-primary);
+  font-size: 1.25rem;
+  box-shadow: 0 4px 15px rgba(15, 23, 42, 0.15);
+  transition: background 0.2s, color 0.2s, transform 0.2s;
 }
+
+.rotas-gps-float:hover {
+  background: #fff7e6;
+  color: var(--rotas-accent-hover);
+  transform: translateY(-2px);
+}
+
+/* Marcadores personalizados do Leaflet */
+
+.rotas-mapa .lumio-map-pin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  color: var(--rotas-primary);
+}
+
+.rotas-mapa .lumio-map-pin > i {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 2px solid #ffffff;
+  border-radius: 50% 50% 50% 5px;
+  background: var(--rotas-accent);
+  color: var(--rotas-primary);
+  font-size: 13px;
+  box-shadow: 0 3px 9px rgba(15, 23, 42, 0.25);
+  transform: rotate(-45deg);
+}
+
+.rotas-mapa .lumio-map-pin > i::before {
+  transform: rotate(45deg);
+}
+
+.rotas-mapa .lumio-map-pin > span {
+  max-width: 150px;
+  padding: 4px 7px;
+  overflow: hidden;
+  border-radius: 5px;
+  background: var(--rotas-primary);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  box-shadow: 0 2px 5px rgba(15, 23, 42, 0.15);
+}
+
+.rotas-mapa .lumio-map-pin--van > i {
+  width: 38px;
+  height: 38px;
+  background: #16a34a;
+  color: #ffffff;
+  font-size: 16px;
+}
+
+/* =====================================================
+   PAINEL LATERAL
+   ===================================================== */
 
 .rotas-sidebar {
   position: relative;
-  z-index: 600;
-  padding: 26px 24px;
-  background: #fff;
-  border-left: 1px solid #e7eaf0;
-  overflow-y: auto;
-  max-height: calc(100vh - 70px);
+  z-index: 2;
+  min-width: 0;
+  padding: 27px 23px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 21px;
+  background: var(--rotas-surface);
+  border-left: 1px solid var(--rotas-border);
+  box-shadow: -5px 0 22px rgba(15, 23, 42, 0.035);
 }
 
 .rotas-heading {
-  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
 }
 
 .rotas-badge {
@@ -136,50 +285,83 @@
   align-items: center;
   gap: 7px;
   padding: 7px 10px;
+  border: 1px solid #fde7b0;
   border-radius: 7px;
-  background: #fff3df;
-  color: #a85b08;
-  font-size: 10px;
+  background: #fff8e7;
+  color: #a16207;
+  font-size: 0.65rem;
   font-weight: 800;
+  letter-spacing: 0.65px;
   text-transform: uppercase;
-  letter-spacing: 0.4px;
 }
 
 .rotas-heading h2 {
-  margin: 14px 0 7px;
-  font-size: 25px;
-  letter-spacing: -0.7px;
+  margin: 0;
+  color: var(--rotas-primary);
+  font-size: 1.7rem;
+  font-weight: 800;
+  letter-spacing: -0.8px;
 }
 
 .rotas-heading p {
   margin: 0;
-  color: #788398;
-  font-size: 12px;
-  line-height: 1.6;
+  color: var(--rotas-muted);
+  font-size: 0.82rem;
+  line-height: 1.65;
+}
+
+/* =====================================================
+   FORMULÁRIO DE ENDEREÇOS
+   ===================================================== */
+
+.rotas-form {
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
 }
 
 .rotas-field {
-  margin-bottom: 19px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  min-width: 0;
 }
 
-.rotas-field label {
-  display: block;
-  margin-bottom: 9px;
-  color: #344054;
+.rotas-field > label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #334155;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.rotas-field > label > i {
+  width: 25px;
+  height: 25px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: #eff6ff;
+  color: #2563eb;
   font-size: 12px;
-  font-weight: 800;
 }
 
-.rotas-field label i {
-  width: 19px;
-  margin-right: 4px;
-  color: #d97706;
+.rotas-field:first-child > label > i {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.rotas-field:last-of-type > label > i {
+  background: #fef3c7;
+  color: #b45309;
 }
 
 .rotas-input-row {
   display: flex;
   align-items: stretch;
   gap: 7px;
+  min-width: 0;
 }
 
 .rotas-autocomplete {
@@ -191,271 +373,358 @@
 .rotas-autocomplete input,
 .rotas-numero {
   width: 100%;
-  height: 42px;
-  box-sizing: border-box;
-  border: 1px solid #dfe4ec;
-  border-radius: 8px;
-  background: #fbfcfe;
-  color: #172033;
-  font-family: inherit;
-  font-size: 12px;
-  outline: none;
-}
-
-.rotas-autocomplete input {
+  height: 43px;
+  min-width: 0;
   padding: 0 11px;
-}
-
-.rotas-numero {
-  flex: 0 0 54px;
-  padding: 0 8px;
-  text-align: center;
-}
-
-.rotas-autocomplete input:focus,
-.rotas-numero:focus {
-  border-color: #d97706;
-  box-shadow: 0 0 0 3px #d9770618;
+  border: 1px solid #dbe2ea;
+  border-radius: 9px;
+  outline: none;
+  background: #f8fafc;
+  color: var(--rotas-text);
+  font-size: 0.76rem;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
 }
 
 .rotas-autocomplete input::placeholder,
 .rotas-numero::placeholder {
-  color: #9aa3b3;
+  color: #94a3b8;
+}
+
+.rotas-autocomplete input:focus,
+.rotas-numero:focus {
+  border-color: var(--rotas-accent);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.12);
+}
+
+.rotas-numero {
+  width: 54px;
+  flex: 0 0 54px;
+  padding: 0 5px;
+  text-align: center;
 }
 
 .rotas-gps-button {
+  width: 42px;
+  height: 43px;
+  display: grid;
+  place-items: center;
   flex: 0 0 42px;
-  border: 1px solid #dfe4ec;
-  border-radius: 8px;
-  background: #fff;
-  color: #64748b;
-  cursor: pointer;
+  border: 1px solid #dbe2ea;
+  border-radius: 9px;
+  background: #ffffff;
+  color: var(--rotas-primary);
+  font-size: 1rem;
+  transition: 0.2s ease;
 }
 
-.rotas-gps-button:hover,
-.rotas-gps-float:hover {
-  color: #d97706;
+.rotas-gps-button:hover {
+  border-color: #fcd34d;
+  background: #fffbeb;
+  color: #b45309;
 }
+
+/* Sugestões de endereço */
 
 .rotas-sugestoes {
   position: absolute;
   top: calc(100% + 5px);
   left: 0;
   right: 0;
-  z-index: 1200;
-  max-height: 210px;
+  z-index: 2000;
+  max-height: 220px;
   overflow-y: auto;
-  background: #fff;
-  border: 1px solid #e1e5ed;
-  border-radius: 9px;
-  box-shadow: 0 10px 28px #1720331c;
+  border: 1px solid var(--rotas-border);
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.14);
 }
 
 .rotas-sugestoes button {
-  display: block;
   width: 100%;
-  padding: 11px;
-  border: 0;
-  border-bottom: 1px solid #f0f2f6;
-  background: #fff;
-  color: #344054;
-  font-family: inherit;
-  font-size: 11px;
-  line-height: 1.5;
+  padding: 11px 12px;
+  display: block;
+  border: none;
+  border-bottom: 1px solid #f1f5f9;
+  background: #ffffff;
+  color: #334155;
   text-align: left;
-  cursor: pointer;
+  font-size: 0.73rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  transition: background 0.15s;
+}
+
+.rotas-sugestoes button:last-child {
+  border-bottom: none;
 }
 
 .rotas-sugestoes button:hover {
-  background: #fff7ed;
+  background: #fff8e7;
 }
+
+/* =====================================================
+   BOTÃO DE OTIMIZAR ROTA
+   ===================================================== */
 
 .rotas-otimizar {
   width: 100%;
-  min-height: 47px;
-  margin-top: 5px;
+  min-height: 48px;
+  padding: 12px 15px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  border: 0;
-  border-radius: 9px;
-  background: #d97706;
-  color: #fff;
-  font-family: inherit;
-  font-size: 12px;
+  gap: 9px;
+  border: none;
+  border-radius: 10px;
+  background: var(--rotas-accent);
+  color: #172033;
+  font-size: 0.83rem;
   font-weight: 800;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.2s;
+  box-shadow: 0 4px 10px rgba(245, 158, 11, 0.17);
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
 }
 
 .rotas-otimizar:hover:not(:disabled) {
-  background: #b96105;
+  background: #fbbf24;
+  box-shadow: 0 6px 15px rgba(245, 158, 11, 0.23);
   transform: translateY(-1px);
 }
 
 .rotas-otimizar:disabled {
-  opacity: 0.65;
   cursor: wait;
+  opacity: 0.65;
+}
+
+.rotas-otimizar .fa-spinner {
+  animation: rotas-girar 1s linear infinite;
+}
+
+@keyframes rotas-girar {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .rotas-mensagem {
-  padding: 10px 12px;
-  border-radius: 8px;
-  background: #fff3f0;
-  color: #b42318;
-  font-size: 12px;
-  line-height: 1.5;
+  margin: 0;
+  padding: 12px 13px;
+  border: 1px solid #fecaca;
+  border-radius: 9px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
 }
 
+/* =====================================================
+   SEPARADORES
+   ===================================================== */
+
 .rotas-divider {
-  margin: 23px 0;
-  border: 0;
-  border-top: 1px solid #e9edf3;
+  width: 100%;
+  height: 1px;
+  flex-shrink: 0;
+  margin: 0;
+  border: none;
+  background: var(--rotas-border);
 }
+
+/* =====================================================
+   TELEMETRIA
+   ===================================================== */
 
 .rotas-telemetria {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 22px 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.rotas-telemetria > div {
+  min-width: 0;
+  min-height: 82px;
+  padding: 13px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid #e8edf3;
+  border-radius: 11px;
+  background: #f8fafc;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.rotas-telemetria > div:hover {
+  border-color: #fcd34d;
+  transform: translateY(-1px);
+}
+
+.rotas-telemetria span {
+  color: var(--rotas-muted);
+  font-size: 0.67rem;
+  font-weight: 600;
+  line-height: 1.4;
 }
 
 .rotas-telemetria strong {
-  display: block;
-  margin-top: 7px;
-  overflow-wrap: anywhere;
-  color: #263248;
-  font-size: 14px;
+  color: var(--rotas-primary);
+  font-size: 1rem;
   font-weight: 800;
+  overflow-wrap: anywhere;
 }
 
+.rotas-telemetria > div:last-child strong {
+  font-size: 0.76rem;
+}
+
+/* =====================================================
+   SEQUÊNCIA DE EMBARQUE
+   ===================================================== */
+
 .rotas-timeline-title {
+  margin: 0;
   display: flex;
   align-items: center;
   gap: 9px;
-  margin: 0 0 19px;
-  font-size: 13px;
+  color: var(--rotas-primary);
+  font-size: 0.91rem;
+  font-weight: 800;
+  line-height: 1.5;
 }
 
-.rotas-timeline-title i {
-  color: #d97706;
+.rotas-timeline-title > i {
+  color: var(--rotas-accent-hover);
+}
+
+.rotas-timeline {
+  display: flex;
+  flex-direction: column;
 }
 
 .rotas-vazio {
-  padding: 18px;
-  border: 1px dashed #dce2eb;
+  margin: 0;
+  padding: 15px;
+  border: 1px dashed #cbd5e1;
   border-radius: 10px;
-  color: #8791a3;
-  font-size: 12px;
+  background: #f8fafc;
+  color: var(--rotas-muted);
+  font-size: 0.77rem;
   line-height: 1.7;
-  text-align: center;
 }
 
 .rotas-step {
   position: relative;
   display: flex;
-  align-items: flex-start;
   gap: 12px;
-  padding-bottom: 20px;
+  padding-bottom: 19px;
+}
+
+.rotas-step:last-child {
+  padding-bottom: 0;
 }
 
 .rotas-step:not(:last-child)::after {
   position: absolute;
-  top: 35px;
+  top: 31px;
   bottom: 0;
-  left: 15px;
+  left: 14px;
   width: 2px;
-  background: #e8edf3;
+  background: #e2e8f0;
   content: "";
 }
 
 .rotas-step-num {
   position: relative;
   z-index: 1;
-  flex: 0 0 32px;
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   display: grid;
   place-items: center;
-  border: 1px solid #f2d4ac;
+  flex: 0 0 30px;
+  border: 2px solid #ffffff;
   border-radius: 50%;
-  background: #fff7ed;
-  color: #b96105;
-  font-size: 12px;
+  background: var(--rotas-primary);
+  color: #ffffff;
+  font-size: 0.75rem;
   font-weight: 800;
+  box-shadow: 0 0 0 1px #dbe2ea;
+}
+
+.rotas-step > div {
+  min-width: 0;
+  padding-top: 2px;
 }
 
 .rotas-step h4 {
-  margin: 2px 0 5px;
-  color: #273247;
-  font-size: 12px;
+  margin: 0 0 5px;
+  color: #334155;
+  font-size: 0.8rem;
+  font-weight: 700;
 }
 
 .rotas-step p {
   margin: 0;
-  color: #8490a2;
-  font-size: 11px;
+  color: var(--rotas-muted);
+  font-size: 0.72rem;
   line-height: 1.6;
   overflow-wrap: anywhere;
 }
 
-/* Marcadores personalizados do Leaflet */
-.lumio-map-pin {
-  width: max-content;
-  max-width: 190px;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 8px 11px;
-  border: 1px solid #e8eaf0;
-  border-radius: 9px;
-  background: #fff;
-  color: #263248;
-  box-shadow: 0 4px 14px #17203326;
-  font: 700 11px "Plus Jakarta Sans", sans-serif;
-}
+/* =====================================================
+   RESPONSIVIDADE — TABLETS
+   ===================================================== */
 
-.lumio-map-pin i {
-  color: #d97706;
-}
-
-.lumio-map-pin span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.lumio-map-pin--van {
-  border-color: #c6e5d4;
-  background: #ecfdf3;
-}
-
-.lumio-map-pin--van i {
-  color: #16834a;
-}
-
-@media (max-width: 1000px) {
+@media (max-width: 1100px) {
   .rotas-layout {
-    grid-template-columns: minmax(0, 1fr) 390px;
+    grid-template-columns: minmax(0, 1fr) 370px;
   }
 
   .rotas-sidebar {
-    padding: 22px 18px;
+    padding: 24px 17px;
+    gap: 19px;
+  }
+
+  .rotas-header {
+    padding: 0 22px;
   }
 }
 
-@media (max-width: 760px) {
+/* =====================================================
+   RESPONSIVIDADE — CELULARES
+   ===================================================== */
+
+@media (max-width: 800px) {
   .rotas-header {
-    height: 62px;
-    padding: 0 16px;
+    height: 64px;
+    padding: 0 15px;
+  }
+
+  .rotas-brand {
+    gap: 9px;
+  }
+
+  .rotas-brand > i {
+    width: 38px;
+    height: 38px;
+    font-size: 19px;
   }
 
   .rotas-brand h1 {
-    font-size: 16px;
+    font-size: 1.12rem;
   }
 
-  .rotas-user span {
-    display: none;
+  .rotas-brand h1 span {
+    font-size: 0.8rem;
+  }
+
+  .rotas-user {
+    gap: 7px;
+    font-size: 0.77rem;
+  }
+
+  .rotas-user > i {
+    font-size: 1.4rem;
   }
 
   .rotas-layout {
@@ -464,31 +733,100 @@
   }
 
   .rotas-mapa {
-    min-height: 380px;
+    width: 100%;
+    height: 42vh;
+    min-height: 340px;
     flex: none;
   }
 
-  .rotas-sidebar {
-    max-height: none;
-    overflow: visible;
-    padding: 23px 17px;
-    border-top: 1px solid #e7eaf0;
-    border-left: 0;
+  .rotas-mapa-canvas {
+    min-height: 340px;
   }
 
   .rotas-eta {
-    top: 13px;
-    left: 13px;
-    min-width: 145px;
-    padding: 12px 14px;
+    top: 14px;
+    left: 14px;
+    min-width: 150px;
+    padding: 13px 15px;
+    border-radius: 12px;
   }
 
   .rotas-eta strong {
-    font-size: 23px;
+    font-size: 1.55rem;
   }
 
   .rotas-gps-float {
-    right: 13px;
-    bottom: 14px;
+    right: 14px;
+    bottom: 16px;
+  }
+
+  .rotas-sidebar {
+    width: 100%;
+    padding: 24px 18px;
+    gap: 20px;
+    border-top: 1px solid var(--rotas-border);
+    border-left: none;
+  }
+
+  .rotas-heading h2 {
+    font-size: 1.55rem;
+  }
+
+  .rotas-form {
+    gap: 17px;
+  }
+
+  .rotas-telemetria > div {
+    min-height: 76px;
   }
 }
+
+/* =====================================================
+   CELULARES PEQUENOS
+   ===================================================== */
+
+@media (max-width: 380px) {
+  .rotas-header {
+    padding: 0 10px;
+  }
+
+  .rotas-brand h1 {
+    font-size: 1rem;
+  }
+
+  .rotas-brand h1 span {
+    font-size: 0.72rem;
+  }
+
+  .rotas-user {
+    font-size: 0.7rem;
+  }
+
+  .rotas-sidebar {
+    padding: 22px 12px;
+  }
+
+  .rotas-input-row {
+    gap: 5px;
+  }
+
+  .rotas-numero {
+    width: 45px;
+    flex-basis: 45px;
+  }
+
+  .rotas-gps-button {
+    width: 37px;
+    flex-basis: 37px;
+  }
+
+  .rotas-autocomplete input {
+    padding: 0 8px;
+    font-size: 0.7rem;
+  }
+
+  .rotas-telemetria > div {
+    padding: 10px;
+  }
+}
+

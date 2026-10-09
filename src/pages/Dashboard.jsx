@@ -365,66 +365,84 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="lumio-dashboard">
-      <header className="lumio-header">
-        <div className="lumio-brand">
-          <span className="lumio-brand-icon">🚐</span>
-          <div>
-            <strong>Lumio</strong>
-            <small>Rotas inteligentes</small>
-          </div>
+  <div className="lumio-dashboard">
+    <header className="lumio-header">
+      <div className="lumio-brand">
+        <span className="lumio-brand-icon">🚐</span>
+        <div>
+          <strong>Lumio</strong>
+          <small>Planeamento de Rotas</small>
+        </div>
+      </div>
+
+      <div className="lumio-user">
+        <div className="lumio-avatar">
+          {usuario?.foto ? (
+            <img src={usuario.foto} alt="Foto do perfil" />
+          ) : (
+            (usuario?.nome || usuario?.email || "U")
+              .charAt(0)
+              .toUpperCase()
+          )}
         </div>
 
-        <div className="lumio-user">
-          <div className="lumio-avatar">
-            {usuario?.foto ? (
-              <img src={usuario.foto} alt="" />
-            ) : (
-              (usuario?.nome || usuario?.email || "U").charAt(0).toUpperCase()
-            )}
-          </div>
-          <div className="lumio-user-info">
-            <strong>{usuario?.nome || "Minha conta"}</strong>
-            <small>Transportador escolar</small>
-          </div>
-          <button className="lumio-logout" onClick={sair}>Sair</button>
+        <div className="lumio-user-info">
+          <strong>{usuario?.nome || "Minha conta"}</strong>
+          <small>Transportador escolar</small>
         </div>
-      </header>
 
-      <main className="lumio-main">
-        <section className="lumio-map-section">
-          <div ref={mapaElemento} className="lumio-map" />
+        <button className="lumio-logout" onClick={sair}>
+          Sair
+        </button>
+      </div>
+    </header>
 
-          <div className="lumio-eta-card">
-            <span>Tempo estimado</span>
-            <strong>{tempo}</strong>
-            <small>da rota calculada</small>
-          </div>
+    <main className="lumio-main">
+      <section className="lumio-hero">
+        <div>
+          <span className="lumio-hero-eyebrow">
+            PLANEAMENTO INTELIGENTE
+          </span>
+          <h1>Rotas mais inteligentes. Transporte mais eficiente.</h1>
+          <p>
+            Organize os endereços dos alunos e acompanhe o percurso
+            da sua van escolar num só lugar.
+          </p>
+        </div>
 
-          <button
-            className="lumio-location-button"
-            onClick={centralizarGPS}
-            title="Centralizar minha localização"
-          >
-            ◎
-          </button>
-        </section>
+        <span className="lumio-demo-badge">
+          Modo de demonstração
+        </span>
+      </section>
 
-        <aside className="lumio-sidebar">
+      <div className="lumio-grid">
+        <aside className="lumio-form-panel">
           <div className="lumio-panel-heading">
-            <span className="lumio-badge">✦ OTIMIZADOR DE TRAJETO</span>
-            <h1>Mapear alunos</h1>
-            <p>Organize os endereços e planeje a rota da van escolar.</p>
+            <span className="lumio-badge">
+              ✦ OTIMIZADOR DE TRAJETO
+            </span>
+            <h2>Gerar rota</h2>
+            <p>
+              Informe os endereços para calcular o percurso.
+            </p>
           </div>
 
-          {mensagem && <div className="lumio-alert">{mensagem}</div>}
+          {mensagem && (
+            <div className="lumio-alert" role="alert">
+              {mensagem}
+            </div>
+          )}
 
           <div className="lumio-address-list">
             {campos.map((campo, indice) => (
               <div className="lumio-field" key={campo.id}>
                 <label htmlFor={`endereco-${campo.id}`}>
                   <span className={`lumio-field-number ${campo.tipo}`}>
-                    {campo.tipo === "partida" ? "↗" : campo.tipo === "escola" ? "⌂" : indice}
+                    {campo.tipo === "partida"
+                      ? "↗"
+                      : campo.tipo === "escola"
+                        ? "⌂"
+                        : indice}
                   </span>
                   {campo.titulo}
                 </label>
@@ -438,7 +456,11 @@ export default function Dashboard() {
                       placeholder="Digite endereço ou CEP"
                       autoComplete="off"
                       onChange={(e) => {
-                        atualizarCampo(campo.id, "endereco", e.target.value);
+                        atualizarCampo(
+                          campo.id,
+                          "endereco",
+                          e.target.value
+                        );
                         buscarSugestoes(campo, e.target.value);
                       }}
                     />
@@ -450,8 +472,15 @@ export default function Dashboard() {
                             type="button"
                             key={`${campo.id}-${indiceSugestao}`}
                             onClick={() => {
-                              atualizarCampo(campo.id, "endereco", item.display_name);
-                              setSugestoes((atuais) => ({ ...atuais, [campo.id]: [] }));
+                              atualizarCampo(
+                                campo.id,
+                                "endereco",
+                                item.display_name
+                              );
+                              setSugestoes((atuais) => ({
+                                ...atuais,
+                                [campo.id]: [],
+                              }));
                             }}
                           >
                             {item.display_name}
@@ -467,7 +496,13 @@ export default function Dashboard() {
                     value={campo.numero}
                     placeholder="Nº"
                     aria-label={`Número do endereço de ${campo.titulo}`}
-                    onChange={(e) => atualizarCampo(campo.id, "numero", e.target.value)}
+                    onChange={(e) =>
+                      atualizarCampo(
+                        campo.id,
+                        "numero",
+                        e.target.value
+                      )
+                    }
                   />
 
                   {campo.id === "partida" && (
@@ -475,6 +510,7 @@ export default function Dashboard() {
                       className="lumio-gps-button"
                       type="button"
                       title="Usar GPS como partida"
+                      aria-label="Usar GPS como partida"
                       onClick={usarGPSNaPartida}
                     >
                       ◎
@@ -490,34 +526,112 @@ export default function Dashboard() {
             onClick={gerarRota}
             disabled={carregando}
           >
-            {carregando ? "Calculando rota..." : "✦ Gerar rota inteligente"}
+            {carregando
+              ? "Calculando rota..."
+              : "✦ Gerar Rota Inteligente"}
           </button>
 
-          <div className="lumio-metrics">
-            <div>
-              <span>Distância total</span>
-              <strong>{distancia}</strong>
+          <button
+            className="lumio-clear-button"
+            type="button"
+            onClick={() => {
+              limparRota();
+              setParadas([]);
+              setDistancia("-");
+              setTempo("-- min");
+              setMensagem("");
+            }}
+          >
+            Limpar rota do mapa
+          </button>
+
+          <p className="lumio-form-note">
+            <icon-placeholder />
+            Os endereços informados serão usados para calcular o percurso.
+          </p>
+        </aside>
+
+        <section className="lumio-main-content">
+          <div className="lumio-map-card">
+            <div className="lumio-card-heading">
+              <div>
+                <h2>Mapa do percurso</h2>
+                <p>Visualização geográfica das paradas da van.</p>
+              </div>
+
+              <button
+                className="lumio-location-button"
+                type="button"
+                onClick={centralizarGPS}
+                title="Centralizar minha localização"
+                aria-label="Centralizar minha localização"
+              >
+                ◎
+              </button>
             </div>
-            <div>
-              <span>Velocidade GPS</span>
-              <strong>{velocidade} km/h</strong>
+
+            <div className="lumio-map-container">
+              <div ref={mapaElemento} className="lumio-map" />
             </div>
-            <div>
-              <span>Endereços</span>
-              <strong>{paradas.length || 0}</strong>
-            </div>
-            <div>
-              <span>Coordenadas GPS</span>
-              <strong>{coordenadas}</strong>
+
+            <div className="lumio-map-legend">
+              <span>
+                <i className="legend-dot legend-van" />
+                Localização da van
+              </span>
+              <span>
+                <i className="legend-dot legend-stop" />
+                Paradas da rota
+              </span>
+              <small>© OpenStreetMap · Rotas por OSRM</small>
             </div>
           </div>
 
-          <section className="lumio-timeline-section">
-            <h2>☷ Sequência de paradas</h2>
+          <section className="lumio-metrics-section">
+            <div className="lumio-section-heading">
+              <h2>Métricas do percurso</h2>
+              <p>Dados da rota e da localização atual.</p>
+            </div>
+
+            <div className="lumio-metrics">
+              <div className="lumio-metric-featured">
+                <span>Tempo total estimado</span>
+                <strong>{tempo}</strong>
+                <small>Duração calculada pelo serviço de rotas</small>
+              </div>
+
+              <div>
+                <span>Distância total</span>
+                <strong>{distancia}</strong>
+              </div>
+
+              <div>
+                <span>Velocidade GPS</span>
+                <strong>{velocidade} km/h</strong>
+              </div>
+
+              <div>
+                <span>Paradas</span>
+                <strong>{paradas.length}</strong>
+              </div>
+
+              <div>
+                <span>Coordenadas GPS</span>
+                <strong>{coordenadas}</strong>
+              </div>
+            </div>
+          </section>
+
+          <section className="lumio-sequence-card">
+            <div className="lumio-section-heading">
+              <h2>Sequência otimizada</h2>
+              <p>Ordem dos pontos identificados para o percurso.</p>
+            </div>
 
             {paradas.length === 0 ? (
               <p className="lumio-empty">
-                Preencha os endereços e gere a rota para ver a sequência de paradas.
+                Preencha os endereços e selecione “Gerar Rota
+                Inteligente” para visualizar a sequência.
               </p>
             ) : (
               <ol className="lumio-timeline">
@@ -533,12 +647,9 @@ export default function Dashboard() {
               </ol>
             )}
           </section>
-
-          <p className="lumio-map-credit">
-            Mapas © OpenStreetMap · Rotas calculadas por OSRM
-          </p>
-        </aside>
-      </main>
-    </div>
-  );
+        </section>
+      </div>
+    </main>
+  </div>
+);
 }
