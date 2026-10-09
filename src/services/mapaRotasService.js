@@ -66,6 +66,29 @@ export async function buscarCep(cep) {
 
 // Pesquisa um endereço no Nominatim.
 async function pesquisarEndereco(consulta, limite = 1) {
+   
+async function pesquisarEnderecoEstruturado({
+  rua,
+  cidade,
+  estado,
+  cep,
+}) {
+  const url = new URL(`${NOMINATIM}/search`);
+
+  url.searchParams.set("format", "jsonv2");
+  url.searchParams.set("country", "Brazil");
+  url.searchParams.set("countrycodes", "br");
+  url.searchParams.set("limit", "3");
+
+  if (rua) url.searchParams.set("street", rua);
+  if (cidade) url.searchParams.set("city", cidade);
+  if (estado) url.searchParams.set("state", estado);
+  if (cep) url.searchParams.set("postalcode", cep);
+
+  const resposta = await fetchSeguro(url.toString(), "Nominatim");
+  return resposta.json();
+}
+
   const url = new URL(`${NOMINATIM}/search`);
 
   url.searchParams.set("format", "jsonv2");
@@ -78,8 +101,10 @@ async function pesquisarEndereco(consulta, limite = 1) {
 }
 
 // Localiza um endereço ou CEP e retorna latitude e longitude.
+
 export async function localizarEndereco(endereco, numero = "") {
   const termo = String(endereco ?? "").trim();
+  const numeroLimpo = String(numero ?? "").trim();
 
   if (!termo) {
     throw new Error("Preencha um endereço.");
@@ -88,47 +113,52 @@ export async function localizarEndereco(endereco, numero = "") {
   const somenteNumeros = termo.replace(/\D/g, "");
   let consulta = termo;
 
-  // Se o campo for um CEP, converte para endereço.
+  // Converte CEP em endereço completo.
   if (somenteNumeros.length === 8) {
     const dadosCep = await buscarCep(somenteNumeros);
-
     consulta = dadosCep.endereco;
 
     if (!consulta) {
-      throw new Error("Não foi possível obter o endereço desse CEP.");
+      throw new Error("O CEP não possui endereço cadastrado.");
     }
   }
 
-  const consultas = [
-    numero ? `${consulta}, ${numero}, Brasil` : `${consulta}, Brasil`,
-  ];
+  const consultas = [];
 
-  // Só tenta novamente sem o número se ele tiver sido informado.
-  if (numero) {
-    consultas.push(`${consulta}, Brasil`);
+  if (numeroLimpo) {
+    consultas.push(`${consulta}, ${numeroLimpo}, Brasil`);
   }
 
-  for (const busca of consultas) {
-    const dados = await pesquisarEndereco(busca, 1);
+  consultas.push(`${consulta}, Brasil`);
 
-    if (Array.isArray(dados) && dados.length > 0) {
-      const lat = Number(dados[0].lat);
-      const lng = Number(dados[0].lon);
+  for (const busca of [...new Set(consultas)]) {
+    const dados = await pesquisarEndereco(busca, 3);
 
-      if (Number.isFinite(lat) && Number.isFinite(lng)) {
-        return {
-          lat,
-          lng,
-          displayName: dados[0].display_name,
-        };
-      }
+    if (!Array.isArray(dados) || dados.length === 0) {
+      continue;
+    }
+
+    const resultado = dados.find((item) =>
+      Number.isFinite(Number(item.lat)) &&
+      Number.isFinite(Number(item.lon))
+    );
+
+    if (resultado) {
+      return {
+        lat: Number(resultado.lat),
+        lng: Number(resultado.lon),
+        displayName: resultado.display_name,
+      };
     }
   }
 
-  throw new Error(`Endereço não localizado: ${termo}`);
+  throw new Error(
+    `Endereço não encontrado: "${termo}". Informe rua, bairro, cidade e estado ou selecione uma sugestão.`
+  );
 }
-
 // Busca sugestões de endereço para o autocomplete.
+
+
 export async function buscarSugestoes(endereco) {
   const termo = String(endereco ?? "").trim();
 
@@ -136,13 +166,46 @@ export async function buscarSugestoes(endereco) {
     return [];
   }
 
-  const dados = await pesquisarEndereco(`${termo}, Brasil`, 5);
+  const somenteNumeros = termo.replace(/\D/g, "");
 
-  if (!Array.isArray(dados)) {
-    return [];
+  // Se for um CEP, consulta primeiro o ViaCEP.
+  if (somenteNumeros.length === 8) {
+    const dadosCep = await buscarCep(somenteNumeros);
+
+    const resultado = await pesquisarEndereco(
+      `${dadosCep.endereco}, Brasil`,
+      5
+    );
+
+    return resultado
+      .filter((item) => Number.isFinite(Number(item.lat)) &&
+        Number.isFinite(Number(item.lon)))
+      .map((item) => ({
+        id: item.place_id,
+        place_id: item.place_id,
+        nome: item.name || item.display_name,
+        enderecoCompleto: item.display_name,
+        display_name: item.display_name,
+        lat: Number(item.lat),
+        lng: Number(item.lon),
+      }));
   }
 
-  return dados;
+  // Pesquisa normal por rua, bairro, cidade ou endereço.
+  const dados = await pesquisarEndereco(`${termo}, Brasil`, 5);
+
+  return dados
+    .filter((item) => Number.isFinite(Number(item.lat)) &&
+      Number.isFinite(Number(item.lon)))
+    .map((item) => ({
+      id: item.place_id,
+      place_id: item.place_id,
+      nome: item.name || item.display_name,
+      enderecoCompleto: item.display_name,
+      display_name: item.display_name,
+      lat: Number(item.lat),
+      lng: Number(item.lon),
+    }));
 }
 
 // Converte as coordenadas do GPS em um endereço legível.

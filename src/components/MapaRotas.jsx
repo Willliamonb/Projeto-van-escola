@@ -12,16 +12,46 @@ import {
 } from "../services/mapaRotasService";
 
 const PONTOS_INICIAIS = [
-  { id: "partida", titulo: "Ponto de Partida / Garagem", icone: "fa-location-dot", endereco: "", numero: "" },
-  { id: "aluno1", titulo: "Aluno 1 (Endereço)", icone: "fa-child", endereco: "", numero: "" },
-  { id: "aluno2", titulo: "Aluno 2 (Endereço)", icone: "fa-child", endereco: "", numero: "" },
-  { id: "escola", titulo: "Escola / Destino Final", icone: "fa-school", endereco: "", numero: "" },
+  {
+    id: "partida",
+    titulo: "Ponto de Partida / Garagem",
+    icone: "fa-location-dot",
+    endereco: "",
+    numero: "",
+    localizacao: null,
+  },
+  {
+    id: "aluno1",
+    titulo: "Aluno 1 (Endereço)",
+    icone: "fa-child",
+    endereco: "",
+    numero: "",
+    localizacao: null,
+  },
+  {
+    id: "aluno2",
+    titulo: "Aluno 2 (Endereço)",
+    icone: "fa-child",
+    endereco: "",
+    numero: "",
+    localizacao: null,
+  },
+  {
+    id: "escola",
+    titulo: "Escola / Destino Final",
+    icone: "fa-school",
+    endereco: "",
+    numero: "",
+    localizacao: null,
+  },
 ];
 
 function iconeMapa(texto, icone, van = false) {
   return L.divIcon({
     className: "",
-    html: `<div class="lumio-map-pin ${van ? "lumio-map-pin--van" : ""}">
+    html: `<div class="lumio-map-pin ${
+      van ? "lumio-map-pin--van" : ""
+    }">
       <i class="fa-solid ${icone}"></i>
       <span>${texto}</span>
     </div>`,
@@ -50,6 +80,7 @@ export default function MapaRotas() {
   const [sequencia, setSequencia] = useState([]);
   const [quantidadeParadas, setQuantidadeParadas] = useState(0);
 
+  // Inicialização do mapa.
   useEffect(() => {
     if (!elementoMapa.current || mapaRef.current) return;
 
@@ -59,15 +90,16 @@ export default function MapaRotas() {
 
     mapaRef.current = mapa;
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 19,
-      attribution: "&copy; OpenStreetMap contributors",
-    }).addTo(mapa);
+    L.tileLayer(
+      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      {
+        maxZoom: 19,
+        attribution: "&copy; OpenStreetMap contributors",
+      }
+    ).addTo(mapa);
 
     L.control.zoom({ position: "topright" }).addTo(mapa);
 
-    // O mapa começa em São Paulo como referência.
-    // A localização do motorista será usada quando o GPS autorizar.
     const timer = setTimeout(() => mapa.invalidateSize(), 100);
 
     return () => {
@@ -78,6 +110,7 @@ export default function MapaRotas() {
     };
   }, []);
 
+  // Acompanhamento do GPS.
   useEffect(() => {
     if (!navigator.geolocation) return;
 
@@ -89,6 +122,7 @@ export default function MapaRotas() {
 
         posicaoRef.current = local;
         setCoordenadas({ lat, lng });
+
         setVelocidade(
           pos.coords.speed == null
             ? 0
@@ -105,22 +139,19 @@ export default function MapaRotas() {
 
           mapa.setView(local, 15);
 
-          // Preenche a partida com o endereço GPS na primeira localização.
-          setPontos((atuais) => {
-            if (atuais[0].endereco) return atuais;
-
-            buscarEnderecoPorCoordenadas(lat, lng)
-              .then((endereco) => {
-                setPontos((lista) =>
-                  lista.map((p, i) =>
-                    i === 0 && !p.endereco ? { ...p, endereco } : p
-                  )
-                );
-              })
-              .catch(() => {});
-
-            return atuais;
-          });
+          buscarEnderecoPorCoordenadas(lat, lng)
+            .then((endereco) => {
+              setPontos((atuais) =>
+                atuais.map((ponto, indice) =>
+                  indice === 0 && !ponto.endereco
+                    ? { ...ponto, endereco, localizacao: null }
+                    : ponto
+                )
+              );
+            })
+            .catch((erro) => {
+              console.warn("Não foi possível obter o endereço GPS:", erro);
+            });
         } else {
           marcadorVanRef.current.setLatLng(local);
         }
@@ -128,58 +159,111 @@ export default function MapaRotas() {
       (erro) => {
         console.warn("GPS indisponível:", erro.message);
       },
-      { enableHighAccuracy: true, maximumAge: 3000, timeout: 10000 }
+      {
+        enableHighAccuracy: true,
+        maximumAge: 3000,
+        timeout: 10000,
+      }
     );
 
     return () => navigator.geolocation.clearWatch(watchId);
   }, []);
 
+  // Atualização do campo e busca de sugestões.
   const atualizarPonto = (id, campo, valor) => {
-    setPontos((atuais) =>
-      atuais.map((ponto) =>
-        ponto.id === id ? { ...ponto, [campo]: valor } : ponto
-      )
-    );
-
     if (campo === "endereco") {
+      // Invalida qualquer busca anterior imediatamente.
+      ultimaBuscaRef.current[id] = valor;
       clearTimeout(timersRef.current[id]);
 
-      if (valor.trim().replace(/\D/g, "").length === 8) {
-        setSugestoes((atuais) => ({ ...atuais, [id]: [] }));
-        // O CEP será convertido ao selecionar uma sugestão ou calcular a rota.
-        return;
-      }
+      setPontos((atuais) =>
+        atuais.map((ponto) =>
+          ponto.id === id
+            ? { ...ponto, endereco: valor, localizacao: null }
+            : ponto
+        )
+      );
 
-      if (valor.trim().length < 3) {
+      setMensagem("");
+
+      const termo = valor.trim();
+
+      if (termo.replace(/\D/g, "").length === 8 || termo.length < 3) {
         setSugestoes((atuais) => ({ ...atuais, [id]: [] }));
         return;
       }
 
       timersRef.current[id] = setTimeout(async () => {
         try {
-          ultimaBuscaRef.current[id] = valor;
-          const resultados = await buscarSugestoes(valor);
+          const resultados = await buscarSugestoes(termo);
 
-          // Ignora resultados antigos se o usuário já digitou outra coisa.
+          // Não exibe resultados de uma pesquisa anterior.
           if (ultimaBuscaRef.current[id] !== valor) return;
 
-          setSugestoes((atuais) => ({ ...atuais, [id]: resultados }));
-        } catch {
+          setSugestoes((atuais) => ({
+            ...atuais,
+            [id]: Array.isArray(resultados) ? resultados : [],
+          }));
+        } catch (erro) {
+          if (ultimaBuscaRef.current[id] !== valor) return;
+
+          console.warn("Erro ao buscar sugestões:", erro);
+
           setSugestoes((atuais) => ({ ...atuais, [id]: [] }));
         }
-      }, 700);
+      }, 1000);
+
+      return;
     }
+
+    setPontos((atuais) =>
+      atuais.map((ponto) =>
+        ponto.id === id ? { ...ponto, [campo]: valor } : ponto
+      )
+    );
   };
 
+  // Seleciona a sugestão e guarda suas coordenadas.
   const selecionarSugestao = (pontoId, item) => {
+    const endereco =
+      item.enderecoCompleto ||
+      item.display_name ||
+      item.nome ||
+      "";
+
+    const lat = Number(item.lat);
+    const lng = Number(item.lng ?? item.lon);
+
+    if (
+      !endereco ||
+      !Number.isFinite(lat) ||
+      !Number.isFinite(lng)
+    ) {
+      setMensagem("Não foi possível selecionar esse endereço. Tente outra sugestão.");
+      return;
+    }
+
+    clearTimeout(timersRef.current[pontoId]);
+    ultimaBuscaRef.current[pontoId] = endereco;
+
     setPontos((atuais) =>
       atuais.map((ponto) =>
         ponto.id === pontoId
-          ? { ...ponto, endereco: item.display_name }
+          ? {
+              ...ponto,
+              endereco,
+              localizacao: {
+                lat,
+                lng,
+                displayName: endereco,
+              },
+            }
           : ponto
       )
     );
+
     setSugestoes((atuais) => ({ ...atuais, [pontoId]: [] }));
+    setMensagem("");
   };
 
   const usarGpsNaPartida = useCallback(async () => {
@@ -197,12 +281,27 @@ export default function MapaRotas() {
       );
 
       setPontos((atuais) =>
-        atuais.map((ponto, i) =>
-          i === 0 ? { ...ponto, endereco } : ponto
+        atuais.map((ponto, indice) =>
+          indice === 0
+            ? {
+                ...ponto,
+                endereco,
+                localizacao: {
+                  lat: posicao[0],
+                  lng: posicao[1],
+                  displayName: endereco,
+                },
+              }
+            : ponto
         )
       );
+
+      setSugestoes((atuais) => ({ ...atuais, partida: [] }));
+      setMensagem("");
     } catch (erro) {
-      setMensagem(erro.message || "Não foi possível obter o endereço GPS.");
+      setMensagem(
+        erro.message || "Não foi possível obter o endereço GPS."
+      );
     }
   }, []);
 
@@ -215,14 +314,20 @@ export default function MapaRotas() {
       rotaRef.current = null;
     }
 
-    marcadoresRef.current.forEach((marcador) => mapa.removeLayer(marcador));
+    marcadoresRef.current.forEach((marcador) =>
+      mapa.removeLayer(marcador)
+    );
+
     marcadoresRef.current = [];
   };
 
+  // Gera a rota usando as coordenadas selecionadas sempre que disponíveis.
   const processarRotaInteligente = async () => {
     setMensagem("");
 
-    const preenchidos = pontos.filter((ponto) => ponto.endereco.trim());
+    const preenchidos = pontos.filter((ponto) =>
+      ponto.endereco.trim()
+    );
 
     if (!pontos[0].endereco.trim() || preenchidos.length < 2) {
       setMensagem("Preencha a partida e pelo menos um destino.");
@@ -236,7 +341,23 @@ export default function MapaRotas() {
       const localizacoes = [];
 
       for (const ponto of preenchidos) {
-        const local = await localizarEndereco(ponto.endereco, ponto.numero);
+        let local;
+
+        if (
+          ponto.localizacao &&
+          Number.isFinite(ponto.localizacao.lat) &&
+          Number.isFinite(ponto.localizacao.lng)
+        ) {
+          // Usa as coordenadas da sugestão escolhida.
+          local = ponto.localizacao;
+        } else {
+          // Se não houve seleção, procura o endereço normalmente.
+          local = await localizarEndereco(
+            ponto.endereco,
+            ponto.numero
+          );
+        }
+
         localizacoes.push({
           ...local,
           id: ponto.id,
@@ -250,7 +371,10 @@ export default function MapaRotas() {
       if (!mapa) return;
 
       rotaRef.current = L.geoJSON(
-        { type: "Feature", geometry: resultado.geometria },
+        {
+          type: "Feature",
+          geometry: resultado.geometria,
+        },
         {
           style: {
             color: "#d97706",
@@ -277,7 +401,10 @@ export default function MapaRotas() {
       });
 
       if (bounds.length) {
-        mapa.fitBounds(bounds, { padding: [45, 45], maxZoom: 15 });
+        mapa.fitBounds(bounds, {
+          padding: [45, 45],
+          maxZoom: 15,
+        });
       }
 
       setSequencia(resultado.sequencia);
@@ -293,7 +420,9 @@ export default function MapaRotas() {
 
   const centralizarGPS = () => {
     if (posicaoRef.current && mapaRef.current) {
-      mapaRef.current.setView(posicaoRef.current, 16, { animate: true });
+      mapaRef.current.setView(posicaoRef.current, 16, {
+        animate: true,
+      });
     } else {
       setMensagem("Aguardando sinal de GPS da van.");
     }
@@ -304,7 +433,9 @@ export default function MapaRotas() {
       <header className="rotas-header">
         <div className="rotas-brand">
           <i className="fa-solid fa-van-shuttle" />
-          <h1>Lumio <span>| Rotas</span></h1>
+          <h1>
+            Lumio <span>| Rotas</span>
+          </h1>
         </div>
 
         <div className="rotas-user">
@@ -339,8 +470,11 @@ export default function MapaRotas() {
             <span className="rotas-badge">
               <i className="fa-solid fa-route" /> Otimizador de trajeto
             </span>
+
             <h2>Mapear alunos</h2>
-            <p>Defina a partida, os endereços e os números das residências.</p>
+            <p>
+              Defina a partida, os endereços e os números das residências.
+            </p>
           </div>
 
           <div className="rotas-form">
@@ -360,28 +494,59 @@ export default function MapaRotas() {
                       placeholder={
                         indice === 3
                           ? "Endereço da escola..."
-                          : "Endereço ou CEP..."
+                          : "Digite rua, bairro, cidade ou CEP..."
                       }
                       autoComplete="off"
                       onChange={(e) =>
-                        atualizarPonto(ponto.id, "endereco", e.target.value)
+                        atualizarPonto(
+                          ponto.id,
+                          "endereco",
+                          e.target.value
+                        )
                       }
-                      onFocus={() => {
-                        setMensagem("");
+                      onFocus={() => setMensagem("")}
+                      onKeyDown={(e) => {
+                        if (e.key === "Escape") {
+                          setSugestoes((atuais) => ({
+                            ...atuais,
+                            [ponto.id]: [],
+                          }));
+                        }
                       }}
                     />
 
                     {sugestoes[ponto.id]?.length > 0 && (
-                      <div className="rotas-sugestoes">
-                        {sugestoes[ponto.id].map((item) => (
-                          <button
-                            type="button"
-                            key={item.place_id}
-                            onClick={() => selecionarSugestao(ponto.id, item)}
-                          >
-                            {item.display_name}
-                          </button>
-                        ))}
+                      <div
+                        className="rotas-sugestoes"
+                        role="listbox"
+                        aria-label={`Sugestões para ${ponto.titulo}`}
+                      >
+                        {sugestoes[ponto.id].map((item, index) => {
+                          const nome =
+                            item.enderecoCompleto ||
+                            item.display_name ||
+                            item.nome;
+
+                          const chave =
+                            item.id ??
+                            item.place_id ??
+                            `${ponto.id}-${index}`;
+
+                          return (
+                            <button
+                              type="button"
+                              role="option"
+                              aria-selected="false"
+                              key={chave}
+                              onClick={() =>
+                                selecionarSugestao(ponto.id, item)
+                              }
+                            >
+                              <i className="fa-solid fa-location-dot" />
+                              <span>{nome}</span>
+                            </button>
+                          );
+                        })}
                       </div>
                     )}
                   </div>
@@ -394,7 +559,11 @@ export default function MapaRotas() {
                     placeholder="Nº"
                     aria-label={`Número do endereço: ${ponto.titulo}`}
                     onChange={(e) =>
-                      atualizarPonto(ponto.id, "numero", e.target.value)
+                      atualizarPonto(
+                        ponto.id,
+                        "numero",
+                        e.target.value
+                      )
                     }
                   />
 
@@ -425,7 +594,10 @@ export default function MapaRotas() {
                     : "fa-wand-magic-sparkles"
                 }`}
               />
-              {carregando ? "Calculando rota..." : "Gerar rota inteligente"}
+
+              {carregando
+                ? "Calculando rota..."
+                : "Gerar rota inteligente"}
             </button>
 
             {mensagem && (
@@ -440,16 +612,23 @@ export default function MapaRotas() {
           <div className="rotas-telemetria">
             <div>
               <span>Distância total</span>
-              <strong>{distancia == null ? "-" : `${distancia.toFixed(1)} km`}</strong>
+              <strong>
+                {distancia == null
+                  ? "-"
+                  : `${distancia.toFixed(1)} km`}
+              </strong>
             </div>
+
             <div>
               <span>Velocidade (GPS)</span>
               <strong>{velocidade.toFixed(1)} km/h</strong>
             </div>
+
             <div>
               <span>Paradas</span>
               <strong>{quantidadeParadas} endereços</strong>
             </div>
+
             <div>
               <span>Coordenadas</span>
               <strong>
@@ -473,11 +652,15 @@ export default function MapaRotas() {
               </p>
             ) : (
               sequencia.map((ponto, indice) => (
-                <div className="rotas-step" key={`${ponto.id}-${indice}`}>
+                <div
+                  className="rotas-step"
+                  key={`${ponto.id}-${indice}`}
+                >
                   <span className="rotas-step-num">{indice + 1}</span>
+
                   <div>
                     <h4>{ponto.titulo}</h4>
-                    <p>{ponto.displayName}</p>
+                    <p>{ponto.displayName || ponto.endereco || "-"}</p>
                   </div>
                 </div>
               ))
