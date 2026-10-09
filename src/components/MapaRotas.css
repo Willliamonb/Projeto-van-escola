@@ -1,0 +1,494 @@
+
+.rotas-app {
+  min-height: 100vh;
+  background: #f4f6fa;
+  color: #172033;
+  font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+.rotas-header {
+  height: 70px;
+  padding: 0 28px;
+  background: #fff;
+  border-bottom: 1px solid #e7eaf0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.rotas-brand,
+.rotas-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rotas-brand > i {
+  color: #d97706;
+  font-size: 25px;
+}
+
+.rotas-brand h1 {
+  font-size: 19px;
+  font-weight: 800;
+  margin: 0;
+}
+
+.rotas-brand h1 span {
+  color: #778197;
+  font-weight: 500;
+}
+
+.rotas-user {
+  color: #4c566b;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.rotas-user i {
+  font-size: 25px;
+  color: #64748b;
+}
+
+.rotas-layout {
+  min-height: calc(100vh - 70px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 440px;
+}
+
+.rotas-mapa {
+  position: relative;
+  min-height: 650px;
+  overflow: hidden;
+}
+
+.rotas-mapa-canvas {
+  position: absolute;
+  inset: 0;
+  min-height: 100%;
+  background: #e8edf2;
+}
+
+.rotas-eta {
+  position: absolute;
+  z-index: 500;
+  top: 22px;
+  left: 22px;
+  min-width: 185px;
+  padding: 17px 20px;
+  background: #fff;
+  border: 1px solid #e6eaf0;
+  border-radius: 14px;
+  box-shadow: 0 8px 30px #17203318;
+}
+
+.rotas-eta span,
+.rotas-telemetria span {
+  display: block;
+  color: #788398;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.rotas-eta strong {
+  display: block;
+  margin-top: 6px;
+  color: #d97706;
+  font-size: 27px;
+  font-weight: 800;
+}
+
+.rotas-gps-float {
+  position: absolute;
+  z-index: 500;
+  right: 22px;
+  bottom: 25px;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: 13px;
+  background: #fff;
+  color: #334155;
+  font-size: 19px;
+  box-shadow: 0 5px 20px #17203322;
+  cursor: pointer;
+}
+
+.rotas-sidebar {
+  position: relative;
+  z-index: 600;
+  padding: 26px 24px;
+  background: #fff;
+  border-left: 1px solid #e7eaf0;
+  overflow-y: auto;
+  max-height: calc(100vh - 70px);
+}
+
+.rotas-heading {
+  margin-bottom: 24px;
+}
+
+.rotas-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 10px;
+  border-radius: 7px;
+  background: #fff3df;
+  color: #a85b08;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.rotas-heading h2 {
+  margin: 14px 0 7px;
+  font-size: 25px;
+  letter-spacing: -0.7px;
+}
+
+.rotas-heading p {
+  margin: 0;
+  color: #788398;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.rotas-field {
+  margin-bottom: 19px;
+}
+
+.rotas-field label {
+  display: block;
+  margin-bottom: 9px;
+  color: #344054;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.rotas-field label i {
+  width: 19px;
+  margin-right: 4px;
+  color: #d97706;
+}
+
+.rotas-input-row {
+  display: flex;
+  align-items: stretch;
+  gap: 7px;
+}
+
+.rotas-autocomplete {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.rotas-autocomplete input,
+.rotas-numero {
+  width: 100%;
+  height: 42px;
+  box-sizing: border-box;
+  border: 1px solid #dfe4ec;
+  border-radius: 8px;
+  background: #fbfcfe;
+  color: #172033;
+  font-family: inherit;
+  font-size: 12px;
+  outline: none;
+}
+
+.rotas-autocomplete input {
+  padding: 0 11px;
+}
+
+.rotas-numero {
+  flex: 0 0 54px;
+  padding: 0 8px;
+  text-align: center;
+}
+
+.rotas-autocomplete input:focus,
+.rotas-numero:focus {
+  border-color: #d97706;
+  box-shadow: 0 0 0 3px #d9770618;
+}
+
+.rotas-autocomplete input::placeholder,
+.rotas-numero::placeholder {
+  color: #9aa3b3;
+}
+
+.rotas-gps-button {
+  flex: 0 0 42px;
+  border: 1px solid #dfe4ec;
+  border-radius: 8px;
+  background: #fff;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.rotas-gps-button:hover,
+.rotas-gps-float:hover {
+  color: #d97706;
+}
+
+.rotas-sugestoes {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  right: 0;
+  z-index: 1200;
+  max-height: 210px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #e1e5ed;
+  border-radius: 9px;
+  box-shadow: 0 10px 28px #1720331c;
+}
+
+.rotas-sugestoes button {
+  display: block;
+  width: 100%;
+  padding: 11px;
+  border: 0;
+  border-bottom: 1px solid #f0f2f6;
+  background: #fff;
+  color: #344054;
+  font-family: inherit;
+  font-size: 11px;
+  line-height: 1.5;
+  text-align: left;
+  cursor: pointer;
+}
+
+.rotas-sugestoes button:hover {
+  background: #fff7ed;
+}
+
+.rotas-otimizar {
+  width: 100%;
+  min-height: 47px;
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 0;
+  border-radius: 9px;
+  background: #d97706;
+  color: #fff;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.rotas-otimizar:hover:not(:disabled) {
+  background: #b96105;
+  transform: translateY(-1px);
+}
+
+.rotas-otimizar:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.rotas-mensagem {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #fff3f0;
+  color: #b42318;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.rotas-divider {
+  margin: 23px 0;
+  border: 0;
+  border-top: 1px solid #e9edf3;
+}
+
+.rotas-telemetria {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px 12px;
+}
+
+.rotas-telemetria strong {
+  display: block;
+  margin-top: 7px;
+  overflow-wrap: anywhere;
+  color: #263248;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.rotas-timeline-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 19px;
+  font-size: 13px;
+}
+
+.rotas-timeline-title i {
+  color: #d97706;
+}
+
+.rotas-vazio {
+  padding: 18px;
+  border: 1px dashed #dce2eb;
+  border-radius: 10px;
+  color: #8791a3;
+  font-size: 12px;
+  line-height: 1.7;
+  text-align: center;
+}
+
+.rotas-step {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding-bottom: 20px;
+}
+
+.rotas-step:not(:last-child)::after {
+  position: absolute;
+  top: 35px;
+  bottom: 0;
+  left: 15px;
+  width: 2px;
+  background: #e8edf3;
+  content: "";
+}
+
+.rotas-step-num {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #f2d4ac;
+  border-radius: 50%;
+  background: #fff7ed;
+  color: #b96105;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.rotas-step h4 {
+  margin: 2px 0 5px;
+  color: #273247;
+  font-size: 12px;
+}
+
+.rotas-step p {
+  margin: 0;
+  color: #8490a2;
+  font-size: 11px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+/* Marcadores personalizados do Leaflet */
+.lumio-map-pin {
+  width: max-content;
+  max-width: 190px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 11px;
+  border: 1px solid #e8eaf0;
+  border-radius: 9px;
+  background: #fff;
+  color: #263248;
+  box-shadow: 0 4px 14px #17203326;
+  font: 700 11px "Plus Jakarta Sans", sans-serif;
+}
+
+.lumio-map-pin i {
+  color: #d97706;
+}
+
+.lumio-map-pin span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lumio-map-pin--van {
+  border-color: #c6e5d4;
+  background: #ecfdf3;
+}
+
+.lumio-map-pin--van i {
+  color: #16834a;
+}
+
+@media (max-width: 1000px) {
+  .rotas-layout {
+    grid-template-columns: minmax(0, 1fr) 390px;
+  }
+
+  .rotas-sidebar {
+    padding: 22px 18px;
+  }
+}
+
+@media (max-width: 760px) {
+  .rotas-header {
+    height: 62px;
+    padding: 0 16px;
+  }
+
+  .rotas-brand h1 {
+    font-size: 16px;
+  }
+
+  .rotas-user span {
+    display: none;
+  }
+
+  .rotas-layout {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .rotas-mapa {
+    min-height: 380px;
+    flex: none;
+  }
+
+  .rotas-sidebar {
+    max-height: none;
+    overflow: visible;
+    padding: 23px 17px;
+    border-top: 1px solid #e7eaf0;
+    border-left: 0;
+  }
+
+  .rotas-eta {
+    top: 13px;
+    left: 13px;
+    min-width: 145px;
+    padding: 12px 14px;
+  }
+
+  .rotas-eta strong {
+    font-size: 23px;
+  }
+
+  .rotas-gps-float {
+    right: 13px;
+    bottom: 14px;
+  }
+}
