@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
-import Background from "../assets/background.png";
+import Background from "../assets/Background.png";
 
 import "./Login.css";
 import Logo from "../assets/logo.svg";
