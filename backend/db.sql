@@ -563,3 +563,9 @@ CREATE TABLE viagem_aluno (
         REFERENCES aluno(id)
         ON DELETE CASCADE
 );
+
+
+ALTER TABLE enderecos ADD COLUMN logradouro VARCHAR(255) AFTER cep;
+
+
+select * from representante;

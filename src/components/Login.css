@@ -240,6 +240,30 @@
   color: #f3b71b;
 }
 
+
+
+.lumio-login__message {
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background-color: #d1fae5;
+  color: #065f46;
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.lumio-login__message--error {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.lumio-login__submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+
 /* =========================================================
    RESPONSIVIDADE
    ========================================================= */

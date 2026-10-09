@@ -21,7 +21,7 @@
     "google-auth-library": "^11.2.0",
     "jsonwebtoken": "^9.0.3",
     "mysql2": "^3.24.5",
-    "nodemon": "^3.0.1",
+    "nodemon": "^3.1.14",
     "react-router": "^7.18.4",
     "react-router-dom": "^7.18.4"
   },

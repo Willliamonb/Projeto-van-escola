@@ -1,16 +1,23 @@
+
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { OAuth2Client } from "google-auth-library";
 
 import db from "../config/db.js";
 
-const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+const googleClient = new OAuth2Client(
+    process.env.GOOGLE_CLIENT_ID
+);
 
 // ======================================================
 // GERAR TOKEN JWT
 // ======================================================
 
 function gerarToken(usuario) {
+    if (!process.env.JWT_SECRET) {
+        throw new Error("JWT_SECRET não configurado no .env");
+    }
+
     return jwt.sign(
         {
             id: usuario.id,
@@ -45,22 +52,19 @@ export async function cadastrarUsuario(req, res) {
             });
         }
 
-        // Verifica se o email já existe
-        const [usuarios] = await db.execute(
+        const [usuariosExistentes] = await db.execute(
             "SELECT id FROM representante WHERE email = ?",
-            [email]
+            [email.trim()]
         );
 
-        if (usuarios.length > 0) {
+        if (usuariosExistentes.length > 0) {
             return res.status(409).json({
                 mensagem: "Este email já está cadastrado."
             });
         }
 
-        // Criptografa a senha
         const senhaHash = await bcrypt.hash(senha, 10);
 
-        // Cadastra usuário
         const [resultado] = await db.execute(
             `
             INSERT INTO representante
@@ -75,8 +79,8 @@ export async function cadastrarUsuario(req, res) {
             VALUES (?, ?, ?, ?, ?, ?)
             `,
             [
-                nome,
-                email,
+                nome.trim(),
+                email.trim(),
                 senhaHash,
                 tipo_documento || null,
                 documento || null,
@@ -84,14 +88,20 @@ export async function cadastrarUsuario(req, res) {
             ]
         );
 
+        const usuario = {
+            id: resultado.insertId,
+            nome: nome.trim(),
+            email: email.trim(),
+            role: "user"
+        };
+
+        // Gera o token JWT após criar o usuário
+        const token = gerarToken(usuario);
+
         return res.status(201).json({
             mensagem: "Usuário cadastrado com sucesso.",
-            usuario: {
-                id: resultado.insertId,
-                nome,
-                email,
-                role: "user"
-            }
+            token,
+            usuario
         });
 
     } catch (erro) {
@@ -131,7 +141,7 @@ export async function login(req, res) {
             FROM representante
             WHERE email = ?
             `,
-            [email]
+            [email.trim()]
         );
 
         if (usuarios.length === 0) {
@@ -142,7 +152,6 @@ export async function login(req, res) {
 
         const usuario = usuarios[0];
 
-        // Verifica senha
         const senhaValida = await bcrypt.compare(
             senha,
             usuario.senha
@@ -180,7 +189,7 @@ export async function login(req, res) {
 }
 
 // ======================================================
-// PERFIL
+// BUSCAR PERFIL DO USUÁRIO
 // ======================================================
 
 export async function perfil(req, res) {
@@ -238,6 +247,12 @@ export async function loginGoogle(req, res) {
             });
         }
 
+        if (!process.env.GOOGLE_CLIENT_ID) {
+            return res.status(500).json({
+                mensagem: "GOOGLE_CLIENT_ID não configurado."
+            });
+        }
+
         const ticket = await googleClient.verifyIdToken({
             idToken: credential,
             audience: process.env.GOOGLE_CLIENT_ID
@@ -245,27 +260,33 @@ export async function loginGoogle(req, res) {
 
         const payload = ticket.getPayload();
 
+        if (!payload || !payload.email) {
+            return res.status(400).json({
+                mensagem: "Não foi possível obter os dados da conta Google."
+            });
+        }
+
         const {
             sub: googleId,
             name,
             email,
-            picture
+            picture,
+            email_verified: emailVerificado
         } = payload;
 
-        if (!email) {
-            return res.status(400).json({
-                mensagem: "Não foi possível obter o email do Google."
+        if (!emailVerificado) {
+            return res.status(401).json({
+                mensagem: "O email da conta Google não foi verificado."
             });
         }
 
-        // Procura usuário pelo Google ID
+        // Procura primeiro pelo identificador Google
         let [usuarios] = await db.execute(
             `
             SELECT
                 id,
                 nome,
                 email,
-                senha,
                 google_id,
                 foto,
                 role
@@ -275,8 +296,7 @@ export async function loginGoogle(req, res) {
             [googleId]
         );
 
-        // Caso não encontre pelo Google ID,
-        // procura pelo email
+        // Se não encontrar, procura pelo email
         if (usuarios.length === 0) {
             [usuarios] = await db.execute(
                 `
@@ -284,7 +304,6 @@ export async function loginGoogle(req, res) {
                     id,
                     nome,
                     email,
-                    senha,
                     google_id,
                     foto,
                     role
@@ -297,11 +316,8 @@ export async function loginGoogle(req, res) {
 
         let usuario;
 
-        // ==============================================
-        // USUÁRIO NÃO EXISTE → CADASTRAR
-        // ==============================================
-
         if (usuarios.length === 0) {
+            // Cria uma conta para o usuário Google
             const [resultado] = await db.execute(
                 `
                 INSERT INTO representante
@@ -335,20 +351,13 @@ export async function loginGoogle(req, res) {
             };
 
         } else {
-
-            // ==========================================
-            // USUÁRIO JÁ EXISTE
-            // ==========================================
-
             usuario = usuarios[0];
 
-            // Atualiza Google ID e foto se necessário
+            // Vincula a conta Google ao usuário existente
             await db.execute(
                 `
                 UPDATE representante
-                SET
-                    google_id = ?,
-                    foto = ?
+                SET google_id = ?, foto = ?
                 WHERE id = ?
                 `,
                 [
@@ -386,7 +395,7 @@ export async function loginGoogle(req, res) {
 }
 
 // ======================================================
-// ATUALIZAR ENDEREÇO
+// ATUALIZAR OU CADASTRAR ENDEREÇO
 // ======================================================
 
 export async function atualizarEndereco(req, res) {
@@ -415,7 +424,7 @@ export async function atualizarEndereco(req, res) {
             });
         }
 
-        // Verifica se já existe endereço
+        // Verifica se o usuário já possui endereço
         const [enderecos] = await db.execute(
             `
             SELECT id
@@ -426,8 +435,7 @@ export async function atualizarEndereco(req, res) {
         );
 
         if (enderecos.length > 0) {
-
-            // Atualiza endereço existente
+            // Atualiza o endereço existente
             await db.execute(
                 `
                 UPDATE enderecos
@@ -454,8 +462,7 @@ export async function atualizarEndereco(req, res) {
             );
 
         } else {
-
-            // Cria novo endereço
+            // Insere um novo endereço
             await db.execute(
                 `
                 INSERT INTO enderecos
@@ -485,7 +492,7 @@ export async function atualizarEndereco(req, res) {
         }
 
         return res.status(200).json({
-            mensagem: "Endereço atualizado com sucesso."
+            mensagem: "Endereço salvo com sucesso."
         });
 
     } catch (erro) {
@@ -496,4 +503,3 @@ export async function atualizarEndereco(req, res) {
         });
     }
 }
-
