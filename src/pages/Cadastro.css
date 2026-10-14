@@ -313,3 +313,9 @@ padding: 10px;
 font-size: 13px;
 }
 }
+
+.lumio-register__google-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
