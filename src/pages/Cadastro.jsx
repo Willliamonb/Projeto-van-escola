@@ -26,7 +26,7 @@ export default function Cadastro() {
   const [erro, setErro] = useState(false);
 
   const navigate = useNavigate();
-
+  
   const handleChange = (e) => {
     const { id, value } = e.target;
 
@@ -38,6 +38,67 @@ export default function Cadastro() {
     setMensagem("");
     setErro(false);
   };
+
+  
+  const buscarCep = async (valor) => {
+    const cepLimpo = valor.replace(/\D/g, '').slice(0, 8);
+
+    setFormData((prev) => ({
+      ...prev,
+      cep: cepLimpo,
+    }));
+
+    setMensagem('');
+    setErro(false);
+
+    if (cepLimpo.length !== 8) {
+      return;
+    }
+
+    try {
+      const resposta = await fetch(
+        `https://viacep.com.br/ws/${cepLimpo}/json/`
+      );
+
+      if (!resposta.ok) {
+        throw new Error('Não foi possível consultar o CEP.');
+      }
+
+      const dados = await resposta.json();
+
+      if (dados.erro) {
+        setMensagem('CEP não encontrado. Confira os números digitados.');
+        setErro(true);
+
+        setFormData((prev) => ({
+          ...prev,
+          rua: '',
+          bairro: '',
+          cidade: '',
+          estado: '',
+        }));
+
+        return;
+      }
+
+      setFormData((prev) => ({
+        ...prev,
+        rua: dados.logradouro || '',
+        bairro: dados.bairro || '',
+        cidade: dados.localidade || '',
+        estado: (dados.uf || '').toUpperCase(),
+      }));
+
+    } catch (error) {
+      console.error('Erro ao buscar CEP:', error);
+
+      setMensagem(
+        'Não foi possível consultar o CEP. Você pode preencher o endereço manualmente.'
+      );
+      setErro(true);
+    }
+  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -281,16 +342,17 @@ export default function Cadastro() {
               <div className="lumio-register__field">
                 <label htmlFor="cep">CEP:</label>
 
-                <input
-                  type="text"
-                  id="cep"
-                  placeholder="00000-000"
-                  value={formData.cep}
-                  onChange={handleChange}
-                  maxLength={9}
-                  autoComplete="postal-code"
-                  required
-                />
+                  <input
+    type="text"
+    id="cep"
+    placeholder="00000-000"
+    value={formData.cep}
+    onChange={(e) => buscarCep(e.target.value)}
+    maxLength={8}
+    inputMode="numeric"
+    autoComplete="postal-code"
+    required
+  />
               </div>
 
               <div className="lumio-register__row">
